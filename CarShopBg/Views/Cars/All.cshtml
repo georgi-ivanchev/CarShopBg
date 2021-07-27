@@ -1,0 +1,48 @@
+﻿@model AllCarsViewModel
+
+<div class="row">
+    <div class="form-group col-md-4">
+        <select class="form-control" id="BrandId" onchange="cars()">
+            <option value="0" id="0" selected hidden>Select your brand</option>
+            @foreach (var brand in Model.Brands)
+            {
+                <option value="@brand.Id" id="@brand.Id">@brand.Name</option>
+            }
+        </select>
+    </div>
+    <div class="form-group col-md-4">
+        <select class="form-control" id="ModelId" disabled>
+            <option value="0" id="0" disabled selected hidden>Select your model</option>
+            @foreach (var currentModel in Model.Models)
+            {
+                <option value="@currentModel.Id" id="@currentModel.BrandId">@currentModel.Name</option>
+            }
+        </select>
+    </div>
+    <div class="form-group col-md-4">
+        <select class="form-control" id="CategoryId">
+            <option selected hidden value="">Select your category</option>
+            @foreach (var category in Model.Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    @for (int i = 0; i < Model.Cars.Count(); i++)
+    {
+        var car = Model.Cars[i];
+        <div class="col">
+            <div class="card" style="width: 18rem;">
+                <img class="card-img-top" src="@car.ImageUrl" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">@car.Brand @car.Model</h5>
+                    <p class="card-text">@car.Brand @car.Model first registrated on @car.FirstRegistration that costs €@car.Price.</p>
+                    <a href="/Cars/Details?carId=@car.Id" class="btn btn-primary">Details</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

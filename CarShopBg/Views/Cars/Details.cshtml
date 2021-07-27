@@ -1,0 +1,52 @@
+﻿@model CarDetailsViewModel
+
+<section class="py-5">
+    <div class="container">
+        <h1 style="margin: 2%; text-align: center;">@Model.Brand @Model.Model @Model.EngineCapacity</h1>
+        <div>
+            <div class="container">
+                <h4><strong>Price: €@Model.Price</strong></h4>
+            </div>
+
+            <div class="form-group text-center">
+                <img src="@Model.ImageUrl" class="img-fluid">
+            </div>
+            <div class="form-group">
+                <label for="firstRegistration"><strong>FirstRegistration</strong></label>
+                <input type="text" readonly class="form-control" id="firstRegistration" name="firstRegistration" value="@Model.FirstRegistration">
+            </div>
+            <div class="form-group">
+                <label for="mileage"><strong>Mileage</strong></label>
+                <input type="text" readonly class="form-control" id="mileage" name="mileage" value="@Model.Mileage Km">
+            </div>
+            <div class="form-group">
+                <label for="engineCapacity"><strong>Engine capacity</strong></label>
+                <input type="text" readonly class="form-control" id="engineCapacity" name="engineCapacity" value="@Model.EngineCapacity">
+            </div>
+            <div class="form-group">
+                <label for="horsePower"><strong>Horse Power</strong></label>
+                <input type="text" readonly class="form-control" id="horsePower" name="horsePower" value="@Model.HorsePower bhp">
+            </div>
+            <div class="form-group">
+                <label for="fuelType"><strong>Fuel Type</strong></label>
+                <input type="text" readonly class="form-control" id="fuelType" value="@Model.FuelType">
+            </div>
+            <div class="form-group">
+                <label for="gearbox"><strong>Gearbox</strong></label>
+                <input type="text" readonly class="form-control" id="gearbox" value="@Model.Gearbox">
+            </div>
+            <div class="form-group">
+                <label for="firstRegistration"><strong>FirstRegistration</strong></label>
+                <input type="text" readonly class="form-control" id="firstRegistration" name="firstRegistration" value="@Model.FirstRegistration">
+            </div>
+            <div class="form-group">
+                <label for="category"><strong>Category</strong></label>
+                <input type="text" readonly class="form-control" id="category" name="category" value="@Model.Category">
+            </div>
+            <div class="form-group">
+                <label for="description"><strong>Description</strong></label>
+                <input type="text" readonly class="form-control" id="description" name="Description" value="@Model.Description">
+            </div>
+        </div>
+    </div>
+</section>
