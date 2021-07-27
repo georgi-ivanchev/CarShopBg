@@ -2,8 +2,9 @@
 
 <div class="row">
     <div class="form-group col-md-4">
-        <select class="form-control" id="BrandId" onchange="cars()">
-            <option value="0" id="0" selected hidden>Select your brand</option>
+        <select class="form-control" id="BrandId" onchange="brandFilter()">
+            <option value="0" id="0" selected hidden>Filter by brand</option>
+            <option value="AllCars" id="AllCars">All</option>
             @foreach (var brand in Model.Brands)
             {
                 <option value="@brand.Id" id="@brand.Id">@brand.Name</option>
@@ -11,8 +12,9 @@
         </select>
     </div>
     <div class="form-group col-md-4">
-        <select class="form-control" id="ModelId" disabled>
-            <option value="0" id="0" disabled selected hidden>Select your model</option>
+        <select class="form-control" id="ModelId" disabled onchange="modelFilter()">
+            <option value="0" id="0" disabled selected hidden>Filter by model</option>
+            <option value="AllCars" id="AllCars">All</option>
             @foreach (var currentModel in Model.Models)
             {
                 <option value="@currentModel.Id" id="@currentModel.BrandId">@currentModel.Name</option>
@@ -20,8 +22,9 @@
         </select>
     </div>
     <div class="form-group col-md-4">
-        <select class="form-control" id="CategoryId">
-            <option selected hidden value="">Select your category</option>
+        <select class="form-control" id="CategoryId" onchange="categoryFilter()">
+            <option value="" selected hidden>Filter by category</option>
+            <option value="AllCars" id="AllCars">All</option>
             @foreach (var category in Model.Categories)
             {
                 <option value="@category.Id">@category.Name</option>
@@ -37,12 +40,100 @@
         <div class="col">
             <div class="card" style="width: 18rem;">
                 <img class="card-img-top" src="@car.ImageUrl" alt="Card image cap">
-                <div class="card-body">
-                    <h5 class="card-title">@car.Brand @car.Model</h5>
-                    <p class="card-text">@car.Brand @car.Model first registrated on @car.FirstRegistration that costs €@car.Price.</p>
+                <div class="card-body" title="@car.BrandId">
+                    <h5 class="card-title" title="@car.ModelId">@car.Brand @car.Model</h5>
+                    <p class="card-text" title="@car.CategoryId">@car.Brand @car.Model first registrated on @car.FirstRegistration that costs €@car.Price.</p>
                     <a href="/Cars/Details?carId=@car.Id" class="btn btn-primary">Details</a>
                 </div>
             </div>
         </div>
     }
 </div>
+
+
+<script>
+    function brandFilter() {
+
+        let brandSelect = document.getElementById("BrandId");
+        let modelSelect = document.getElementById("ModelId");
+        let selectedItem = document.getElementById("0");
+        modelSelect.disabled = false;
+        let brand = brandSelect.options[brandSelect.selectedIndex];
+        let modelArray = modelSelect.options;
+
+        for (let i = 0; i < modelArray.length; i++) {
+            if (modelArray[i].attributes.id.value == brand.attributes.id.value || modelArray[i].attributes.id.value == "AllCars") {
+                modelArray[i].style.display = "block";
+                modelSelect.selectedIndex = selectedItem;
+            }
+            else {
+                modelArray[i].style.display = "none";
+            }
+        }
+
+        let brandElements = document.getElementsByClassName("card-body");
+        if (brand.value == "AllCars") {
+            for (var i = 0; i < brandElements.length; i++) {
+                brandElements[i].parentElement.parentElement.hidden = false;
+            }
+        }
+        else {
+            for (var i = 0; i < brandElements.length; i++) {
+                if (brandElements[i].title !== brand.id) {
+                    brandElements[i].parentElement.parentElement.hidden = true;
+                }
+                else {
+                    brandElements[i].parentElement.parentElement.hidden = false;
+                }
+            }
+        }
+
+    }
+
+    function modelFilter() {
+        let modelSelect = document.getElementById("ModelId");
+        let model = modelSelect.options[modelSelect.selectedIndex];
+        console.log(model.value);
+
+        let modelElements = document.getElementsByClassName("card-title");
+
+        for (var i = 0; i < modelElements.length; i++) {
+            if (modelElements[i].title !== model.value) {
+                modelElements[i].parentElement.parentElement.parentElement.hidden = true;
+            }
+            else {
+                modelElements[i].parentElement.parentElement.parentElement.hidden = false;
+            }
+        }
+    }
+
+    function categoryFilter() {
+        let brandSelect = document.getElementById("BrandId");
+        let categorySelect = document.getElementById("CategoryId");
+        let category = categorySelect.options[categorySelect.selectedIndex];
+        let brand = brandSelect.options[brandSelect.selectedIndex];
+        let categoryElements = document.getElementsByClassName("card-text");
+
+        for (var i = 0; i < categoryElements.length; i++) {
+            console.log(`${categoryElements[i].parentElement.title} - ${brand.id}`);
+            console.log(`${categoryElements[i].title} - ${category.value}`);
+            if (categoryElements[i].title == category.value && categoryElements[i].parentElement.title == brand.id) {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else if (category.value == "AllCars" && categoryElements[i].parentElement.title == brand.id) {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else if (categoryElements[i].title == category.value && brand.id == "AllCars") {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else if (categoryElements[i].title == category.value && brand.id == "0") {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else if (category.value == "AllCars" && brand.id == "0") {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else if (category.value == "AllCars" && brand.id == "AllCars") {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = true;
+            }
+        }
+
+
+    }
+</script>

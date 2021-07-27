@@ -1,12 +1,13 @@
 ﻿namespace CarShopBg.Controllers
 {
-    using System.Collections.Generic;
-    using Microsoft.AspNetCore.Mvc;
-    using CarShopBg.Data;
     using System.Linq;
-    using CarShopBg.Models.Cars;
-    using CarShopBg.Data.Models;
+    using Microsoft.AspNetCore.Mvc;
+    using System.Collections.Generic;
+    using Microsoft.AspNetCore.Authorization;
     using System.ComponentModel.DataAnnotations;
+    using CarShopBg.Data;
+    using CarShopBg.Data.Models;
+    using CarShopBg.Models.Cars;
     using CarShopBg.Models.Home;
 
     public class CarsController : Controller
@@ -16,7 +17,10 @@
         public CarsController(CarShopBgDbContext data)
             => this.data = data;
 
+
+
         [Display(Name = "Add New Offer")]
+        [Authorize]
         public IActionResult Create() => View(new CreateCarOfferFormModel
         {
             Categories = GetCarCategories(),
@@ -25,6 +29,7 @@
         });
 
         [HttpPost]
+        [Authorize]
         public IActionResult Create(CreateCarOfferFormModel carModel)
         {
             if (!ModelState.IsValid)
@@ -67,7 +72,8 @@
                     Price = c.Price,
                     FirstRegistration = c.FirstRegistration,
                     Id = c.Id,
-                    ImageUrl = c.ImageUrl
+                    ImageUrl = c.ImageUrl,
+                    CategoryId = c.CategoryId
                 })
                 .ToList();
 
@@ -75,10 +81,11 @@
             {
                 var brand = data.Brands.Where(b => b.Id == car.BrandId).ToList();
                 var model = data.Models.Where(m => m.Id == car.ModelId).ToList();
+                var category = data.Categories.Where(c => c.Id == car.CategoryId).ToList();
 
                 car.Brand = brand[0].Name;
                 car.Model = model[0].Name;
-
+                car.Category = category[0].Name;
             }
 
             var totalCars = data.Cars.Count();

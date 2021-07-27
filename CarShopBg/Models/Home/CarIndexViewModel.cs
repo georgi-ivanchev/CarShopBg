@@ -16,6 +16,10 @@
 
         public int ModelId { get; init; }
 
+        public int CategoryId { get; init; }
+
+        public string Category { get; set; }
+
         public string Brand { get; set; }
 
         public string Model { get; set; }
