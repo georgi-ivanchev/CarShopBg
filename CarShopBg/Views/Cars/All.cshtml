@@ -37,28 +37,55 @@
     @for (int i = 0; i < Model.Cars.Count(); i++)
     {
         var car = Model.Cars[i];
-        <div class="col">
-            <div class="card" style="width: 18rem;">
-                <img class="card-img-top" src="@car.ImageUrl" alt="Card image cap">
-                <div class="card-body" title="@car.BrandId">
-                    <h5 class="card-title" title="@car.ModelId">@car.Brand @car.Model</h5>
-                    <p class="card-text" title="@car.CategoryId">@car.Brand @car.Model first registrated on @car.FirstRegistration that costs €@car.Price.</p>
-                    <a href="/Cars/Details?carId=@car.Id" class="btn btn-primary">Details</a>
+        if (i < 3)
+        {
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="@car.ImageUrl" alt="Card image cap">
+                    <div class="card-body" title="@car.BrandId">
+                        <h5 class="card-title" title="@car.ModelId">@car.Brand @car.Model</h5>
+                        <p class="card-text" title="@car.CategoryId">@car.Brand @car.Model first registrated on @car.FirstRegistration that costs €@car.Price.</p>
+                        <a href="/Cars/Details?carId=@car.Id" class="btn btn-primary">Details</a>
+                    </div>
                 </div>
             </div>
-        </div>
+        }
+        else
+        {
+            <div class="col" hidden>
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="@car.ImageUrl" alt="Card image cap">
+                    <div class="card-body" title="@car.BrandId">
+                        <h5 class="card-title" title="@car.ModelId">@car.Brand @car.Model</h5>
+                        <p class="card-text" title="@car.CategoryId">@car.Brand @car.Model first registrated on @car.FirstRegistration that costs €@car.Price.</p>
+                        <a href="/Cars/Details?carId=@car.Id" class="btn btn-primary">Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+
     }
 </div>
 
+<button type="button" class="btn btn-primary btn-lg btn-block" id="btn" onclick="viewMore()">Load more</button>
 
 <script>
-    function brandFilter() {
+    let sciptsClicked = 0;
+    let selectedBrand = 0;
+    let selectedModel = 0;
+    let selectedCategory = 0;
+    let carsShown = 3;
+    var brandsArray = [];
 
+    function brandFilter() {
+        let btn = document.getElementById("btn");
+        btn.disabled = false;
         let brandSelect = document.getElementById("BrandId");
         let modelSelect = document.getElementById("ModelId");
         let selectedItem = document.getElementById("0");
         modelSelect.disabled = false;
         let brand = brandSelect.options[brandSelect.selectedIndex];
+        selectedBrand = brand.id;
         let modelArray = modelSelect.options;
 
         for (let i = 0; i < modelArray.length; i++) {
@@ -73,28 +100,49 @@
 
         let brandElements = document.getElementsByClassName("card-body");
         if (brand.value == "AllCars") {
+            carsShown = 3;
             for (var i = 0; i < brandElements.length; i++) {
-                brandElements[i].parentElement.parentElement.hidden = false;
+                if (i < 3) {
+                    brandElements[i].parentElement.parentElement.hidden = false;
+                } else {
+                    brandElements[i].parentElement.parentElement.hidden = true;
+                }
+                
             }
         }
         else {
             for (var i = 0; i < brandElements.length; i++) {
+
                 if (brandElements[i].title !== brand.id) {
                     brandElements[i].parentElement.parentElement.hidden = true;
                 }
+                //else if (brandElements[i].title == "AllCars" && brandsArray.length > 3) {
+                //    let currentElement = brandElements[i].parentElement.parentElement;
+                //    currentElement.hidden = false;
+                //    brandsArray.push(currentElement);
+                //}
+                else if (brandsArray.length >= 3) {
+                    let currentElement = brandElements[i].parentElement.parentElement;
+                    currentElement.hidden = true;
+                    brandsArray.push(currentElement);
+                }
                 else {
-                    brandElements[i].parentElement.parentElement.hidden = false;
+                    let currentElement = brandElements[i].parentElement.parentElement;
+                    currentElement.hidden = false;
+                    brandsArray.push(currentElement);
                 }
             }
         }
-
+        carsShown = 3;
+        sciptsClicked++;
     }
 
     function modelFilter() {
+        let btn = document.getElementById("btn");
+        btn.disabled = false;
         let modelSelect = document.getElementById("ModelId");
         let model = modelSelect.options[modelSelect.selectedIndex];
-        console.log(model.value);
-
+        selectedModel = model.value;
         let modelElements = document.getElementsByClassName("card-title");
 
         for (var i = 0; i < modelElements.length; i++) {
@@ -105,18 +153,20 @@
                 modelElements[i].parentElement.parentElement.parentElement.hidden = false;
             }
         }
+        sciptsClicked++;
     }
 
     function categoryFilter() {
+        let btn = document.getElementById("btn");
+        btn.disabled = false;
         let brandSelect = document.getElementById("BrandId");
         let categorySelect = document.getElementById("CategoryId");
         let category = categorySelect.options[categorySelect.selectedIndex];
         let brand = brandSelect.options[brandSelect.selectedIndex];
         let categoryElements = document.getElementsByClassName("card-text");
+        selectedCategory = category.id;
 
         for (var i = 0; i < categoryElements.length; i++) {
-            console.log(`${categoryElements[i].parentElement.title} - ${brand.id}`);
-            console.log(`${categoryElements[i].title} - ${category.value}`);
             if (categoryElements[i].title == category.value && categoryElements[i].parentElement.title == brand.id) {
                 categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
             } else if (category.value == "AllCars" && categoryElements[i].parentElement.title == brand.id) {
@@ -133,7 +183,54 @@
                 categoryElements[i].parentElement.parentElement.parentElement.hidden = true;
             }
         }
+        sciptsClicked++;
 
+    }
 
+    function viewMore() {
+        let cards = document.getElementsByClassName("card");
+        let btn = document.getElementById("btn");
+        let category = document.getElementsByClassName("card-text");
+        if (sciptsClicked == 0) {
+            if (carsShown + 3 <= cards.length) {
+                btn.disabled = false;
+                for (var i = carsShown; i < carsShown + 3; i++) {
+                    let divElement = cards[i].parentElement;
+                    divElement.hidden = false;
+                }
+                carsShown += 3;
+            } else if (carsShown + 3 > cards.length && carsShown < cards.length) {
+                btn.disabled = false;
+                for (var i = carsShown; i < cards.length; i++) {
+                    let divElement = cards[i].parentElement;
+                    divElement.hidden = false;
+                    carsShown++;
+                }
+                btn.disabled = true;
+            } else if (cards.length <= carsShown) {
+                btn.disabled = true;
+            }
+        } else if (brandsArray.length > 0) {
+            if (carsShown + 3 < brandsArray.length) {
+                btn.disabled = false;
+                for (let i = 0; i < brandsArray.length; i++) {
+                    let divElement = cards[i].parentElement;
+                    divElement.hidden = false;
+
+                }
+            } else if (carsShown + 3 > brandsArray.length && carsShown < brandsArray.length) {
+                btn.disabled = false;
+                for (let i = 0; i < brandsArray.length; i++) {
+                    let divElement = brandsArray[i]
+                    divElement.hidden = false;
+                }
+                btn.disabled = true;
+            } else if (brandsArray.length <= carsShown) {
+                btn.disabled = true;
+            }
+
+        }
+        
+        
     }
 </script>
