@@ -14,15 +14,9 @@
 
     public class CarsController : Controller
     {
-        private readonly CarShopBgDbContext data;
         private readonly ICarService carService;
 
-        public CarsController(CarShopBgDbContext data, ICarService carService)
-        {
-            this.data = data;
-            this.carService = carService;
-        }
-
+        public CarsController(ICarService carService) => this.carService = carService;
 
 
         [Display(Name = "Add New Offer")]
