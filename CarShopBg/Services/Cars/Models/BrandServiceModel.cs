@@ -3,14 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CarShopBg.Models.Cars
+namespace CarShopBg.Services.Cars.Models
 {
-    public class CarModelViewModel
+    public class BrandAndCategoryServiceModel
     {
         public int Id { get; init; }
 
         public string Name { get; init; }
-
-        public int BrandId { get; set; }
     }
 }
