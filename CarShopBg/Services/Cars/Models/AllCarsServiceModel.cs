@@ -1,9 +1,8 @@
-﻿namespace CarShopBg.Models.Cars
+﻿namespace CarShopBg.Services.Cars
 {
     using System.Collections.Generic;
-    using CarShopBg.Services.Cars;
     using CarShopBg.Services.Cars.Models;
-    public class AllCarsViewModel
+    public class AllCarsServiceModel
     {
         public List<CarServiceModel> Cars { get; set; }
 

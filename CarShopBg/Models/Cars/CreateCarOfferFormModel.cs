@@ -4,6 +4,7 @@ namespace CarShopBg.Models.Cars
     using System.Collections.Generic;
     using System.ComponentModel.DataAnnotations;
     using CarShopBg.Models.Enums;
+    using CarShopBg.Services.Cars.Models;
     using static Data.DataConstants;
     public class CreateCarOfferFormModel
     {
@@ -17,7 +18,7 @@ namespace CarShopBg.Models.Cars
         public int Mileage { get; init; }
 
         [Required]
-        [Display(Name ="First Registration")]
+        [Display(Name = "First Registration")]
         public string FirstRegistration { get; init; }
 
         [Required]
@@ -53,12 +54,12 @@ namespace CarShopBg.Models.Cars
         [Display(Name = "Category")]
         public int CategoryId { get; init; }
 
-        
 
-        public IEnumerable<CarCategoryViewModel> Categories { get; set; }
 
-        public IEnumerable<CarBrandViewModel> Brands { get; set; }
+        public IEnumerable<BrandAndCategoryServiceModel> Categories { get; set; }
 
-        public IEnumerable<CarModelViewModel> Models { get; set; }
+        public IEnumerable<BrandAndCategoryServiceModel> Brands { get; set; }
+
+        public IEnumerable<ModelServiceModel> Models { get; set; }
     }
 }

@@ -2,6 +2,7 @@ namespace CarShopBg
 {
     using CarShopBg.Data;
     using CarShopBg.Infrastructure;
+    using CarShopBg.Services.Cars;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.Identity;
@@ -23,6 +24,8 @@ namespace CarShopBg
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
+
+            services.AddTransient<ICarService, CarService>();
 
             services.AddDefaultIdentity<IdentityUser>(options =>
             {

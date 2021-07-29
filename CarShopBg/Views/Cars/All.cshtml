@@ -79,6 +79,7 @@
 
     function brandFilter() {
         let btn = document.getElementById("btn");
+        brandsArray = [];
         btn.disabled = false;
         let brandSelect = document.getElementById("BrandId");
         let modelSelect = document.getElementById("ModelId");
@@ -99,15 +100,20 @@
         }
 
         let brandElements = document.getElementsByClassName("card-body");
+
         if (brand.value == "AllCars") {
             carsShown = 3;
             for (var i = 0; i < brandElements.length; i++) {
-                if (i < 3) {
-                    brandElements[i].parentElement.parentElement.hidden = false;
+                if (brandsArray.length >= 3) {
+                    let currentElement = brandElements[i].parentElement.parentElement;
+                    currentElement.hidden = true;
+                    brandsArray.push(currentElement);
                 } else {
-                    brandElements[i].parentElement.parentElement.hidden = true;
+                    let currentElement = brandElements[i].parentElement.parentElement;
+                    currentElement.hidden = false;
+                    brandsArray.push(currentElement);
                 }
-                
+
             }
         }
         else {
@@ -115,13 +121,7 @@
 
                 if (brandElements[i].title !== brand.id) {
                     brandElements[i].parentElement.parentElement.hidden = true;
-                }
-                //else if (brandElements[i].title == "AllCars" && brandsArray.length > 3) {
-                //    let currentElement = brandElements[i].parentElement.parentElement;
-                //    currentElement.hidden = false;
-                //    brandsArray.push(currentElement);
-                //}
-                else if (brandsArray.length >= 3) {
+                } else if (brandsArray.length >= 3) {
                     let currentElement = brandElements[i].parentElement.parentElement;
                     currentElement.hidden = true;
                     brandsArray.push(currentElement);
@@ -213,14 +213,14 @@
         } else if (brandsArray.length > 0) {
             if (carsShown + 3 < brandsArray.length) {
                 btn.disabled = false;
-                for (let i = 0; i < brandsArray.length; i++) {
+                for (let i = carsShown; i < carsShown + 3; i++) {
                     let divElement = cards[i].parentElement;
                     divElement.hidden = false;
-
                 }
+                carsShown += 3;
             } else if (carsShown + 3 > brandsArray.length && carsShown < brandsArray.length) {
                 btn.disabled = false;
-                for (let i = 0; i < brandsArray.length; i++) {
+                for (let i = carsShown; i < brandsArray.length; i++) {
                     let divElement = brandsArray[i]
                     divElement.hidden = false;
                 }
@@ -230,7 +230,7 @@
             }
 
         }
-        
-        
+
+
     }
 </script>
