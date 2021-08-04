@@ -19,6 +19,8 @@
 
         public DbSet<Model> Models { get; init; }
 
+        public DbSet<Seller> Sellers { get; init; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             builder
@@ -33,6 +35,13 @@
                 .HasOne(c => c.Brand)
                 .WithMany(b => b.Cars)
                 .HasForeignKey(c => c.BrandId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .Entity<Car>()
+                .HasOne(c => c.Seller)
+                .WithMany(s=>s.Cars)
+                .HasForeignKey(c => c.SellerId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             builder

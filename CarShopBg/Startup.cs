@@ -55,8 +55,8 @@ namespace CarShopBg
                 app.UseHsts();
             }
             app.UseHttpsRedirection()
-                .UseStaticFiles().
-                UseRouting()
+                .UseStaticFiles()
+                .UseRouting()
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseEndpoints(endpoints =>
