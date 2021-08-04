@@ -10,16 +10,6 @@
         [Required]
         public int Id { get; init; }
 
-        public Brand Brand { get; init; }
-
-        [Required]
-        public int BrandId { get; init; }
-
-        public Model Model { get; init; }
-
-        [Required]
-        public int ModelId { get; init; }
-
         [Required]
         public int Price { get; init; }
 
@@ -45,9 +35,24 @@
 
         public string EngineCapacity { get; init; }
 
-        public int CategoryId { get; init; }
+        public Brand Brand { get; init; }
+
+        [Required]
+        public int BrandId { get; set; }
+
+        public Model Model { get; set; }
+
+        [Required]
+        public int ModelId { get; set; }
 
         public Category Category { get; init; }
+
+        public int CategoryId { get; set; }
+
+        public Seller Seller { get; init; }
+
+        [Required]
+        public int SellerId { get; init; }
 
     }
 }

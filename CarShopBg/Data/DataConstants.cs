@@ -9,5 +9,8 @@
         public const int CarModelMaxLenght = 30;
 
         public const int CarDescriptionMaxLenght = 500;
+
+        public const int SellerNameMaxLenght = 20;
+        public const int PhoneNumberMaxLenght = 25;
     }
 }

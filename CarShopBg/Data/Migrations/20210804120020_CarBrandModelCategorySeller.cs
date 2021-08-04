@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CarShopBg.Data.Migrations
 {
-    public partial class CarBrandModelCategory : Migration
+    public partial class CarBrandModelCategorySeller : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -34,6 +34,21 @@ namespace CarShopBg.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Sellers",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    PhoneNumber = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
+                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Sellers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Models",
                 columns: table => new
                 {
@@ -59,8 +74,6 @@ namespace CarShopBg.Data.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BrandId = table.Column<int>(type: "int", nullable: false),
-                    ModelId = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<int>(type: "int", nullable: false),
                     Mileage = table.Column<int>(type: "int", nullable: false),
                     FirstRegistration = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -70,7 +83,10 @@ namespace CarShopBg.Data.Migrations
                     HorsePower = table.Column<int>(type: "int", nullable: false),
                     Gearbox = table.Column<int>(type: "int", nullable: false),
                     EngineCapacity = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    CategoryId = table.Column<int>(type: "int", nullable: false)
+                    BrandId = table.Column<int>(type: "int", nullable: false),
+                    ModelId = table.Column<int>(type: "int", nullable: false),
+                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    SellerId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -93,9 +109,15 @@ namespace CarShopBg.Data.Migrations
                         principalTable: "Models",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Cars_Sellers_SellerId",
+                        column: x => x.SellerId,
+                        principalTable: "Sellers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
-           
+            
             migrationBuilder.CreateIndex(
                 name: "IX_Cars_BrandId",
                 table: "Cars",
@@ -112,6 +134,11 @@ namespace CarShopBg.Data.Migrations
                 column: "ModelId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Cars_SellerId",
+                table: "Cars",
+                column: "SellerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Models_BrandId",
                 table: "Models",
                 column: "BrandId");
@@ -119,7 +146,6 @@ namespace CarShopBg.Data.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            
             migrationBuilder.DropTable(
                 name: "Cars");
 
@@ -128,6 +154,9 @@ namespace CarShopBg.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Models");
+
+            migrationBuilder.DropTable(
+                name: "Sellers");
 
             migrationBuilder.DropTable(
                 name: "Brands");

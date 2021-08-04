@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarShopBg.Data.Migrations
 {
     [DbContext(typeof(CarShopBgDbContext))]
-    [Migration("20210723153846_CarBrandModelCategory")]
-    partial class CarBrandModelCategory
+    [Migration("20210804120020_CarBrandModelCategorySeller")]
+    partial class CarBrandModelCategorySeller
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -83,6 +83,9 @@ namespace CarShopBg.Data.Migrations
                     b.Property<int>("Price")
                         .HasColumnType("int");
 
+                    b.Property<int>("SellerId")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("BrandId");
@@ -90,6 +93,8 @@ namespace CarShopBg.Data.Migrations
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("ModelId");
+
+                    b.HasIndex("SellerId");
 
                     b.ToTable("Cars");
                 });
@@ -127,6 +132,32 @@ namespace CarShopBg.Data.Migrations
                     b.HasIndex("BrandId");
 
                     b.ToTable("Models");
+                });
+
+            modelBuilder.Entity("CarShopBg.Data.Models.Seller", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("nvarchar(25)");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sellers");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -349,11 +380,19 @@ namespace CarShopBg.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("CarShopBg.Data.Models.Seller", "Seller")
+                        .WithMany("Cars")
+                        .HasForeignKey("SellerId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
                     b.Navigation("Brand");
 
                     b.Navigation("Category");
 
                     b.Navigation("Model");
+
+                    b.Navigation("Seller");
                 });
 
             modelBuilder.Entity("CarShopBg.Data.Models.Model", b =>
@@ -431,6 +470,11 @@ namespace CarShopBg.Data.Migrations
                 });
 
             modelBuilder.Entity("CarShopBg.Data.Models.Model", b =>
+                {
+                    b.Navigation("Cars");
+                });
+
+            modelBuilder.Entity("CarShopBg.Data.Models.Seller", b =>
                 {
                     b.Navigation("Cars");
                 });

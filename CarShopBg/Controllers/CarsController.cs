@@ -1,16 +1,10 @@
 ﻿namespace CarShopBg.Controllers
 {
-    using System.Linq;
-    using Microsoft.AspNetCore.Mvc;
-    using System.Collections.Generic;
-    using Microsoft.AspNetCore.Authorization;
     using System.ComponentModel.DataAnnotations;
-    using CarShopBg.Data;
-    using CarShopBg.Data.Models;
+    using Microsoft.AspNetCore.Mvc;
+    using Microsoft.AspNetCore.Authorization;
     using CarShopBg.Models.Cars;
-    using CarShopBg.Models.Home;
     using CarShopBg.Services.Cars;
-    using CarShopBg.Services.Cars.Models;
 
     public class CarsController : Controller
     {
