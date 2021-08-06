@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CarShopBg.Data.Migrations
 {
-    public partial class CarBrandModelCategorySeller : Migration
+    public partial class CarSellerBrandModelCategory : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -41,11 +41,17 @@ namespace CarShopBg.Data.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     PhoneNumber = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: false),
-                    UserId = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UserId = table.Column<string>(type: "nvarchar(450)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Sellers", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Sellers_AspNetUsers_UserId",
+                        column: x => x.UserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -117,7 +123,6 @@ namespace CarShopBg.Data.Migrations
                         onDelete: ReferentialAction.Restrict);
                 });
 
-            
             migrationBuilder.CreateIndex(
                 name: "IX_Cars_BrandId",
                 table: "Cars",
@@ -142,12 +147,21 @@ namespace CarShopBg.Data.Migrations
                 name: "IX_Models_BrandId",
                 table: "Models",
                 column: "BrandId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Sellers_UserId",
+                table: "Sellers",
+                column: "UserId",
+                unique: true);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
                 name: "Cars");
+
+            migrationBuilder.DropTable(
+                name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "Categories");
@@ -160,6 +174,7 @@ namespace CarShopBg.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "Brands");
+
         }
     }
 }

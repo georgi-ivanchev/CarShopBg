@@ -52,7 +52,7 @@
         public Seller Seller { get; init; }
 
         [Required]
-        public int SellerId { get; init; }
+        public int SellerId { get; set; }
 
     }
 }

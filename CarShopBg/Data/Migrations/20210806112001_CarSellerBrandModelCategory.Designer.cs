@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarShopBg.Data.Migrations
 {
     [DbContext(typeof(CarShopBgDbContext))]
-    [Migration("20210804120020_CarBrandModelCategorySeller")]
-    partial class CarBrandModelCategorySeller
+    [Migration("20210806112001_CarSellerBrandModelCategory")]
+    partial class CarSellerBrandModelCategory
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -153,9 +153,12 @@ namespace CarShopBg.Data.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
 
                     b.ToTable("Sellers");
                 });
@@ -404,6 +407,15 @@ namespace CarShopBg.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("Brand");
+                });
+
+            modelBuilder.Entity("CarShopBg.Data.Models.Seller", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithOne()
+                        .HasForeignKey("CarShopBg.Data.Models.Seller", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
