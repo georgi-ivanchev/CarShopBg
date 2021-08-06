@@ -20,7 +20,8 @@
             int categoryId,
             string engineCapacity,
             int horsePower,
-            Gearbox gearbox);
+            Gearbox gearbox,
+            int sellerId);
 
         CarDetailsViewModel Details(int carId);
         IEnumerable<BrandAndCategoryServiceModel> GetCarCategories();

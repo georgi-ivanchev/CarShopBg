@@ -3,6 +3,8 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using CarShopBg.Data.Models;
+    using Microsoft.AspNetCore.Identity;
+
     public class CarShopBgDbContext : IdentityDbContext
     {
 
@@ -49,6 +51,13 @@
                 .HasOne(m => m.Brand)
                 .WithMany(b => b.Models)
                 .HasForeignKey(m => m.BrandId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder
+                .Entity<Seller>()
+                .HasOne<IdentityUser>()
+                .WithOne()
+                .HasForeignKey<Seller>(s => s.UserId)
                 .OnDelete(DeleteBehavior.Restrict);
 
             base.OnModelCreating(builder);

@@ -14,7 +14,7 @@
 
         public CarService(CarShopBgDbContext data) => this.data = data;
         
-
+        
         public AllCarsServiceModel AllCars()
         {
             var cars = data.Cars
@@ -67,8 +67,8 @@
             int categoryId,
             string engineCapacity,
             int horsePower,
-            Gearbox gearbox
-            )
+            Gearbox gearbox,
+            int sellerId)
         {
             var car = new Car
             {
@@ -83,8 +83,10 @@
                 CategoryId = categoryId,
                 EngineCapacity = engineCapacity,
                 HorsePower = horsePower,
-                Gearbox = gearbox
+                Gearbox = gearbox,
+                SellerId = sellerId
             };
+
             data.Cars.Add(car);
             data.SaveChanges();
         }

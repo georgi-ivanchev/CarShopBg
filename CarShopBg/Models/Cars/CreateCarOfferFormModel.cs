@@ -54,6 +54,9 @@ namespace CarShopBg.Models.Cars
         [Display(Name = "Category")]
         public int CategoryId { get; init; }
 
+        [Required]
+        public int SellerId { get; init; }
+
 
 
         public IEnumerable<BrandAndCategoryServiceModel> Categories { get; set; }

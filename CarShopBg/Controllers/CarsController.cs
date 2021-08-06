@@ -5,35 +5,49 @@
     using Microsoft.AspNetCore.Authorization;
     using CarShopBg.Models.Cars;
     using CarShopBg.Services.Cars;
+    using System.Security.Claims;
+    using CarShopBg.Services.Sellers;
 
     public class CarsController : Controller
     {
-        private readonly ICarService carService;
+        private readonly ICarService cars;
+        private readonly ISellerService sellers;
+        public CarsController(ICarService cars, ISellerService sellers)
+        {
+            this.cars = cars;
+            this.sellers = sellers;
+        }
 
-        public CarsController(ICarService carService) => this.carService = carService;
 
 
         [Display(Name = "Add New Offer")]
         [Authorize]
         public IActionResult Create() => View(new CreateCarOfferFormModel
         {
-            Categories = carService.GetCarCategories(),
-            Brands = carService.GetCarBrands(),
-            Models = carService.GetCarModels()
+            Categories = cars.GetCarCategories(),
+            Brands = cars.GetCarBrands(),
+            Models = cars.GetCarModels()
         });
 
         [HttpPost]
         [Authorize]
         public IActionResult Create(CreateCarOfferFormModel carModel)
         {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            if (!sellers.IsSeller(userId))
+            {
+                return Redirect("/");
+            }
+            var sellerId = sellers.IdByUserId(userId);
             if (!ModelState.IsValid)
             {
-                carModel.Categories = carService.GetCarCategories();
-                carModel.Brands = carService.GetCarBrands();
-                carModel.Models = carService.GetCarModels();
+                carModel.Categories = cars.GetCarCategories();
+                carModel.Brands = cars.GetCarBrands();
+                carModel.Models = cars.GetCarModels();
                 return View(carModel);
             }
-            carService.CreateCar(
+
+            cars.CreateCar(
                 carModel.BrandId,
                 carModel.ModelId,
                 carModel.Price,
@@ -45,7 +59,8 @@
                 carModel.CategoryId,
                 carModel.EngineCapacity,
                 carModel.HorsePower,
-                carModel.Gearbox);
+                carModel.Gearbox,
+                sellerId);
 
             return Redirect("/");
         }
@@ -54,19 +69,19 @@
         {
             var allCars = new AllCarsViewModel
             {
-                Cars = carService.AllCars().Cars,
-                Categories = carService.AllCars().Categories,
-                Brands = carService.AllCars().Brands,
-                Models = carService.AllCars().Models
+                Cars = cars.AllCars().Cars,
+                Categories = cars.AllCars().Categories,
+                Brands = cars.AllCars().Brands,
+                Models = cars.AllCars().Models
             };
-            carService.AllCars();
+            cars.AllCars();
 
             return View(allCars);
         }
 
         public IActionResult Details(int carId)
         {
-            var car = carService.Details(carId);
+            var car = cars.Details(carId);
 
             return View(car);
         }
