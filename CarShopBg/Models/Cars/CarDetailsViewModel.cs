@@ -32,10 +32,13 @@
 
         public string EngineCapacity { get; init; }
 
-
         public int CategoryId { get; init; }
 
         public string Category { get; set; }
+
+        public string SellerName { get; init; }
+
+        public string SellerPhoneNumber { get; init; }
 
     }
 }

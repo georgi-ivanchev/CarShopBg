@@ -13,8 +13,8 @@
         private readonly CarShopBgDbContext data;
 
         public CarService(CarShopBgDbContext data) => this.data = data;
-        
-        
+
+
         public AllCarsServiceModel AllCars()
         {
             var cars = data.Cars
@@ -93,7 +93,12 @@
 
         public CarDetailsViewModel Details(int carId)
         {
-            var car = data.Cars
+            var car = data.Cars.Where(c => c.Id == carId).Select(c=>c.SellerId).FirstOrDefault();
+            var seller = data.Sellers.Where(s => s.Id == car).First();
+            var sellerName = seller.Name;
+            var sellerPhoneNumber = seller.PhoneNumber;
+
+            var carModel = data.Cars
                 .Where(c => c.Id == carId)
                 .Select(c => new CarDetailsViewModel
                 {
@@ -109,19 +114,21 @@
                     Mileage = c.Mileage,
                     Price = c.Price,
                     Gearbox = c.Gearbox,
-                    HorsePower = c.HorsePower
+                    HorsePower = c.HorsePower,
+                    SellerName = sellerName,
+                    SellerPhoneNumber = sellerPhoneNumber
                 })
                 .FirstOrDefault();
 
-            var brand = data.Brands.Where(b => b.Id == car.BrandId).ToList();
-            var model = data.Models.Where(m => m.Id == car.ModelId).ToList();
-            var category = data.Categories.Where(c => c.Id == car.CategoryId).ToList();
+            var brand = data.Brands.Where(b => b.Id == carModel.BrandId).ToList();
+            var model = data.Models.Where(m => m.Id == carModel.ModelId).ToList();
+            var category = data.Categories.Where(c => c.Id == carModel.CategoryId).ToList();
 
-            car.Brand = brand[0].Name;
-            car.Model = model[0].Name;
-            car.Category = category[0].Name;
+            carModel.Brand = brand[0].Name;
+            carModel.Model = model[0].Name;
+            carModel.Category = category[0].Name;
 
-            return car;
+            return carModel;
         }
 
         public IEnumerable<BrandAndCategoryServiceModel> GetCarCategories()
