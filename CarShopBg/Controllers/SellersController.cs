@@ -1,5 +1,6 @@
 ﻿namespace CarShopBg.Controllers
 {
+    using System.Security.Claims;
     using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Authorization;
     using CarShopBg.Models.Sellers;
@@ -18,7 +19,8 @@
         [HttpPost]
         public IActionResult Become(BecomeSellerFormModel seller)
         {
-            this.seller.CreateSeller(seller.Name, seller.PhoneNumber, seller.UserId);
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            this.seller.CreateSeller(seller.Name, seller.PhoneNumber, userId);
             return RedirectToAction(nameof(CarsController.All), "Cars");
         }
 

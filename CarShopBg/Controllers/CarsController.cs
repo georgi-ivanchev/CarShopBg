@@ -81,6 +81,8 @@
 
         public IActionResult Details(int carId)
         {
+            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+
             var car = cars.Details(carId);
 
             return View(car);
