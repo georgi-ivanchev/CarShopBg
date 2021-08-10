@@ -1,48 +1,21 @@
 ﻿namespace CarShopBg.Controllers
 {
-    using CarShopBg.Models;
     using System.Diagnostics;
     using Microsoft.AspNetCore.Mvc;
-    using CarShopBg.Data;
-    using System.Linq;
+    using CarShopBg.Models;
     using CarShopBg.Models.Home;
+    using CarShopBg.Services.Home;
 
     public class HomeController : Controller
     {
-        CarShopBgDbContext data;
+        private readonly IHomeService homeService;
 
-        public HomeController(CarShopBgDbContext data)
-        {
-            this.data = data;
-        }
+        public HomeController(IHomeService homeService) => this.homeService = homeService;
 
         public IActionResult Index()
         {
-            var cars = data.Cars
-                .OrderByDescending(c => c.Id)
-                .Select(c => new CarIndexViewModel
-                {
-                    BrandId = c.BrandId,
-                    ModelId = c.ModelId,
-                    Price = c.Price,
-                    FirstRegistration = c.FirstRegistration,
-                    Id = c.Id,
-                    ImageUrl = c.ImageUrl
-                })
-                .Take(3)
-                .ToList();
-
-            foreach (var car in cars)
-            {
-                var brand = data.Brands.Where(b => b.Id == car.BrandId).ToList();
-                var model = data.Models.Where(m => m.Id == car.ModelId).ToList();
-
-                car.Brand = brand[0].Name;
-                car.Model = model[0].Name;
-            
-            }
-
-            var totalCars = data.Cars.Count();
+            var cars = homeService.GetLastThreeCars();
+            var totalCars = homeService.CarsCount();
 
             return View(new IndexViewModel
             {
