@@ -18,27 +18,37 @@
             this.sellers = sellers;
         }
 
-
-
         [Display(Name = "Add New Offer")]
         [Authorize]
-        public IActionResult Create() => View(new CreateCarOfferFormModel
+        public IActionResult Create()
         {
-            Categories = cars.GetCarCategories(),
-            Brands = cars.GetCarBrands(),
-            Models = cars.GetCarModels()
-        });
+            var userId = this.User.Id();
+            var sellerId = sellers.IdByUserId(userId);
+            if (!sellers.IsSeller(userId))
+            {
+                return RedirectToAction(nameof(SellersController.Become), "Sellers");
+            }
+
+            var model = new CreateCarOfferFormModel
+            {
+                Categories = cars.GetCarCategories(),
+                Brands = cars.GetCarBrands(),
+                Models = cars.GetCarModels()
+            };
+
+            return View(model);
+        }
 
         [HttpPost]
         [Authorize]
         public IActionResult Create(CreateCarOfferFormModel carModel)
         {
             var userId = this.User.Id();
+            var sellerId = sellers.IdByUserId(userId);
             if (!sellers.IsSeller(userId))
             {
-                return Redirect("/");
+                return RedirectToAction(nameof(SellersController.Become), "Sellers");
             }
-            var sellerId = sellers.IdByUserId(userId);
             if (!ModelState.IsValid)
             {
                 carModel.Categories = cars.GetCarCategories();
@@ -62,7 +72,7 @@
                 carModel.Gearbox,
                 sellerId);
 
-            return Redirect("/");
+            return RedirectToAction(nameof(CarsController.All), "Cars");
         }
 
         public IActionResult All()
@@ -74,18 +84,28 @@
                 Brands = cars.AllCars().Brands,
                 Models = cars.AllCars().Models
             };
-            cars.AllCars();
 
             return View(allCars);
         }
 
         public IActionResult Details(int carId)
         {
-            var userId = this.User.Id();
-
             var car = cars.Details(carId);
 
             return View(car);
+        }
+
+        public IActionResult MyOffers()
+        {
+            var myCars = cars.GetMyOffers(User.Id());
+            var allCars = new AllCarsViewModel
+            {
+                Cars = myCars.Cars,
+                Categories = myCars.Categories,
+                Brands = myCars.Brands,
+                Models = myCars.Models
+            };
+            return View(allCars);
         }
     }
 }

@@ -1,9 +1,13 @@
 ﻿@model CreateCarOfferFormModel
 
+@{ 
+    ViewBag.Title = "Add Car";
+}
+
 <div class="row">
     <div class="offset-lg-2 offset-md-1 offset-xl-3 col-xl-6 col-lg-8 col-md-10 col-sm-12">
 
-        <h2 class="heading-margin text-center">Add Car</h2>
+        <h2 class="heading-margin text-center">@ViewBag.Title</h2>
         <form method="post">
             <div class="row">
                 <div class="form-group col-md-6">

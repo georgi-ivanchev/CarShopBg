@@ -8,9 +8,9 @@
 
     public class SellersController : Controller
     {
-        private readonly ISellerService seller;
+        private readonly ISellerService sellers;
 
-        public SellersController(ISellerService seller) =>  this.seller = seller;
+        public SellersController(ISellerService sellers) =>  this.sellers = sellers;
 
         [Authorize]
         public IActionResult Become() => View();
@@ -20,7 +20,7 @@
         public IActionResult Become(BecomeSellerFormModel seller)
         {
             var userId = this.User.Id();
-            this.seller.CreateSeller(seller.Name, seller.PhoneNumber, userId);
+            this.sellers.CreateSeller(seller.Name, seller.PhoneNumber, userId);
             return RedirectToAction(nameof(CarsController.All), "Cars");
         }
 

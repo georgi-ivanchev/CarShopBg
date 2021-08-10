@@ -31,28 +31,29 @@
                 })
                 .ToList();
 
-            foreach (var car in cars)
-            {
-                var brand = data.Brands.Where(b => b.Id == car.BrandId).ToList();
-                var model = data.Models.Where(m => m.Id == car.ModelId).ToList();
-                var category = data.Categories.Where(c => c.Id == car.CategoryId).ToList();
+            return MapCarBrands(cars);
+        }
 
-                car.Brand = brand[0].Name;
-                car.Model = model[0].Name;
-                car.Category = category[0].Name;
-            }
+        public AllCarsServiceModel GetMyOffers(string userId)
+        {
+            var seller = data.Sellers.Where(s => s.UserId == userId).FirstOrDefault();
+            var sellerId = seller.Id;
+            var cars = data.Cars
+                .OrderByDescending(c => c.Id)
+                .Where(c => c.SellerId == sellerId)
+                .Select(c => new CarServiceModel
+                {
+                    BrandId = c.BrandId,
+                    ModelId = c.ModelId,
+                    Price = c.Price,
+                    FirstRegistration = c.FirstRegistration,
+                    Id = c.Id,
+                    ImageUrl = c.ImageUrl,
+                    CategoryId = c.CategoryId
+                })
+                .ToList();
 
-            var totalCars = data.Cars.Count();
-
-            var allCars = new AllCarsServiceModel
-            {
-                Cars = cars,
-                Categories = GetCarCategories(),
-                Brands = GetCarBrands(),
-                Models = GetCarModels()
-            };
-
-            return allCars;
+            return MapCarBrands(cars);
         }
 
         public void CreateCar(
@@ -93,8 +94,8 @@
 
         public CarDetailsViewModel Details(int carId)
         {
-            var car = data.Cars.Where(c => c.Id == carId).Select(c=>c.SellerId).FirstOrDefault();
-            var seller = data.Sellers.Where(s => s.Id == car).First();
+            var sellerId = data.Cars.Where(c => c.Id == carId).Select(c => c.SellerId).FirstOrDefault();
+            var seller = data.Sellers.Where(s => s.Id == sellerId).First();
             var sellerName = seller.Name;
             var sellerPhoneNumber = seller.PhoneNumber;
 
@@ -162,5 +163,29 @@
                 })
                 .ToList();
 
+        public AllCarsServiceModel MapCarBrands(List<CarServiceModel> cars)
+        {
+            foreach (var car in cars)
+            {
+                var brand = data.Brands.Where(b => b.Id == car.BrandId).ToList();
+                var model = data.Models.Where(m => m.Id == car.ModelId).ToList();
+                var category = data.Categories.Where(c => c.Id == car.CategoryId).ToList();
+
+                car.Brand = brand[0].Name;
+                car.Model = model[0].Name;
+                car.Category = category[0].Name;
+            }
+
+            var totalCars = data.Cars.Count();
+
+            var allCars = new AllCarsServiceModel
+            {
+                Cars = cars,
+                Categories = GetCarCategories(),
+                Brands = GetCarBrands(),
+                Models = GetCarModels()
+            };
+            return allCars;
+        }
     }
 }
