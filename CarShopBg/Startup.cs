@@ -2,6 +2,7 @@ namespace CarShopBg
 {
     using CarShopBg.Data;
     using CarShopBg.Infrastructure;
+    using CarShopBg.Services.Home;
     using CarShopBg.Services.Cars;
     using CarShopBg.Services.Sellers;
     using Microsoft.AspNetCore.Builder;
@@ -29,6 +30,8 @@ namespace CarShopBg
             services.AddTransient<ICarService, CarService>();
 
             services.AddTransient<ISellerService, SellerService>();
+
+            services.AddTransient<IHomeService, HomeService>();
 
             services.AddDefaultIdentity<IdentityUser>(options =>
             {

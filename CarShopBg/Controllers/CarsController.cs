@@ -5,7 +5,7 @@
     using Microsoft.AspNetCore.Authorization;
     using CarShopBg.Models.Cars;
     using CarShopBg.Services.Cars;
-    using System.Security.Claims;
+    using CarShopBg.Infrastructure;
     using CarShopBg.Services.Sellers;
 
     public class CarsController : Controller
@@ -33,7 +33,7 @@
         [Authorize]
         public IActionResult Create(CreateCarOfferFormModel carModel)
         {
-            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = this.User.Id();
             if (!sellers.IsSeller(userId))
             {
                 return Redirect("/");
@@ -81,7 +81,7 @@
 
         public IActionResult Details(int carId)
         {
-            var userId = this.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userId = this.User.Id();
 
             var car = cars.Details(carId);
 

@@ -1,7 +1,8 @@
-﻿namespace CarShopBg.Models.Home
+﻿namespace CarShopBg.Services.Home.Models
 {
+
     using System.ComponentModel.DataAnnotations;
-    public class CarIndexViewModel
+    public class LastCarsServiceModel
     {
         public int Id { get; init; }
 
