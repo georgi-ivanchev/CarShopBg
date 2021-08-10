@@ -1,15 +1,32 @@
 ﻿@using Microsoft.AspNetCore.Identity
+@using CarShopBg.Services.Sellers 
+@using CarShopBg.Infrastructure
+
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@inject ISellerService Sellers
 
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
+
+        var userId = User.Id();
+        var userIsSeller = Sellers.IsSeller(userId);
+
+        if (!userIsSeller)
+        {
+            <li class="nav-item">
+                <a class="nav-link text-white" asp-controller="Sellers" asp-action="Become">Sell your car</a>
+            </li>
+        }
+        else
+        {
+            <li class="nav-item">
+                <a class="nav-link text-white" asp-controller="Cars" asp-action="MyOffers">My Offers</a>
+            </li>
+        }
         <li class="nav-item">
-            <a class="nav-link text-white" asp-controller="Sellers" asp-action="Become" title="Manage">Sell your car</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Your account</a>
+            <a class="nav-link text-white" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">My account</a>
         </li>
         <li class="nav-item">
             <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">

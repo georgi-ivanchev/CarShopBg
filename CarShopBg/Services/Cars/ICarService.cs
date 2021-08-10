@@ -8,6 +8,8 @@
     {
         AllCarsServiceModel AllCars();
 
+        AllCarsServiceModel GetMyOffers(string userId);
+
         void CreateCar
             (int brandId,
             int modelId,
