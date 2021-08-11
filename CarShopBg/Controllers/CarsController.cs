@@ -29,7 +29,7 @@
                 return RedirectToAction(nameof(SellersController.Become), "Sellers");
             }
 
-            var model = new CreateCarOfferFormModel
+            var model = new CarOfferFormModel
             {
                 Categories = cars.GetCarCategories(),
                 Brands = cars.GetCarBrands(),
@@ -41,7 +41,7 @@
 
         [HttpPost]
         [Authorize]
-        public IActionResult Create(CreateCarOfferFormModel carModel)
+        public IActionResult Create(CarOfferFormModel carModel)
         {
             var userId = this.User.Id();
             var sellerId = sellers.IdByUserId(userId);
@@ -88,9 +88,9 @@
             return View(allCars);
         }
 
-        public IActionResult Details(int carId)
+        public IActionResult Details(int id)
         {
-            var car = cars.Details(carId);
+            var car = cars.Details(id);
 
             return View(car);
         }
@@ -106,6 +106,72 @@
                 Models = myCars.Models
             };
             return View(allCars);
+        }
+
+        [Authorize]
+        public IActionResult Edit(int id)
+        {
+            var userId = User.Id();
+            var sellerId = sellers.IdByUserId(userId);
+            if (!this.sellers.IsSeller(userId))
+            {
+                return RedirectToAction(nameof(SellersController.Become), "Sellers");
+            }
+            if (!sellers.IsCarSeller(id, sellerId))
+            {
+                return Unauthorized();
+            }
+
+
+            var car = cars.Details(id);
+
+            var carForm = new CarOfferFormModel
+            {
+                Id = id,
+                BrandId = car.BrandId,
+                ModelId = car.ModelId,
+                Price = car.Price,
+                Mileage = car.Mileage,
+                FirstRegistration = car.FirstRegistration,
+                FuelType = car.FuelType,
+                Description = car.Description,
+                ImageUrl = car.ImageUrl,
+                CategoryId = car.CategoryId,
+                EngineCapacity = car.EngineCapacity,
+                HorsePower = car.HorsePower,
+                Gearbox = car.Gearbox,
+                SellerId = sellerId,
+                Brands = cars.GetCarBrands(),
+                Categories = cars.GetCarCategories(),
+                Models = cars.GetCarModels()
+            };
+
+            return View(carForm);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Edit(int id, CarOfferFormModel car)
+        {
+            var hasEdited = cars.EditCar(id, car);
+            if (!hasEdited)
+            {
+                return BadRequest();
+            }
+            if (!ModelState.IsValid)
+            {
+                car.Categories = cars.GetCarCategories();
+                car.Brands = cars.GetCarBrands();
+                car.Models = cars.GetCarModels();
+                return View(car);
+            }
+            var sellerId = sellers.IdByUserId(this.User.Id());
+            if (!sellers.IsCarSeller(id, sellerId))
+            {
+                return Unauthorized();
+            }
+
+            return RedirectToAction(nameof(Details), new { id });
         }
     }
 }

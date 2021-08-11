@@ -11,29 +11,29 @@
         public int Id { get; init; }
 
         [Required]
-        public int Price { get; init; }
+        public int Price { get; set; }
 
         [Required]
-        public int Mileage { get; init; }
+        public int Mileage { get; set; }
 
         [Required]
-        public string FirstRegistration { get; init; }
+        public string FirstRegistration { get; set; }
 
         [Required]
-        public Fuel FuelType { get; init; }
+        public Fuel FuelType { get; set; }
 
         [Required]
         [MaxLength(CarDescriptionMaxLenght)]
-        public string Description { get; init; }
+        public string Description { get; set; }
 
         [Required]
-        public string ImageUrl { get; init; }
+        public string ImageUrl { get; set; }
 
-        public int HorsePower { get; init; }
+        public int HorsePower { get; set; }
 
-        public Gearbox Gearbox { get; init; }
+        public Gearbox Gearbox { get; set; }
 
-        public string EngineCapacity { get; init; }
+        public string EngineCapacity { get; set; }
 
         public Brand Brand { get; init; }
 

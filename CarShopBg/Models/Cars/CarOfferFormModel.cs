@@ -6,7 +6,7 @@ namespace CarShopBg.Models.Cars
     using CarShopBg.Models.Enums;
     using CarShopBg.Services.Cars.Models;
     using static Data.DataConstants;
-    public class CreateCarOfferFormModel
+    public class CarOfferFormModel
     {
         [Required]
         public int Id { get; init; }

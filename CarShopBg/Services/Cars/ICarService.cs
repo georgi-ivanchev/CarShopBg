@@ -26,6 +26,9 @@
             int sellerId);
 
         CarDetailsViewModel Details(int carId);
+
+        bool EditCar(int carId, CarOfferFormModel carModel);
+
         IEnumerable<BrandAndCategoryServiceModel> GetCarCategories();
 
         IEnumerable<BrandAndCategoryServiceModel> GetCarBrands();

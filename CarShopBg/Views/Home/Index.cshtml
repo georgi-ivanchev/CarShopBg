@@ -28,7 +28,7 @@
                 <img class="d-block w-100" src="@car.ImageUrl" alt="@car.Brand @car.Model">
                 <div class="carousel-caption d-none d-md-block">
                     <h5 class="text-danger">@car.Brand @car.Model (@car.FirstRegistration) - €@car.Price</h5>
-                    <a href="/Cars/Details?carId=@car.Id" class="btn btn-primary">Details</a>
+                    <a asp-controller="Cars" asp-action="Details" asp-route-id="@car.Id" class="btn btn-primary">Details</a>
                 </div>
             </div>
         }
