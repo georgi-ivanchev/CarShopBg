@@ -1,0 +1,242 @@
+﻿<h2 class="text-center">@ViewBag.Title</h2>
+<div class="row">
+    <div class="form-group col-md-4">
+        <select class="form-control" id="BrandId" onchange="brandFilter()">
+            <option value="0" id="0" selected hidden>Filter by brand</option>
+            <option value="AllCars" id="AllCars">All</option>
+            @foreach (var brand in Model.Brands)
+            {
+                <option value="@brand.Id" id="@brand.Id">@brand.Name</option>
+            }
+        </select>
+    </div>
+    <div class="form-group col-md-4">
+        <select class="form-control" id="ModelId" disabled onchange="modelFilter()">
+            <option value="0" id="0" disabled selected hidden>Filter by model</option>
+            <option value="AllCars" id="AllCars">All</option>
+            @foreach (var currentModel in Model.Models)
+            {
+                <option value="@currentModel.Id" id="@currentModel.BrandId">@currentModel.Name</option>
+            }
+        </select>
+    </div>
+    <div class="form-group col-md-4">
+        <select class="form-control" id="CategoryId" onchange="categoryFilter()">
+            <option value="" selected hidden>Filter by category</option>
+            <option value="AllCars" id="AllCars">All</option>
+            @foreach (var category in Model.Categories)
+            {
+                <option value="@category.Id">@category.Name</option>
+            }
+        </select>
+    </div>
+</div>
+
+<div class="row">
+    @for (int i = 0; i < Model.Cars.Count; i++)
+    {
+        var car = Model.Cars[i];
+        if (i < 3)
+        {
+            <div class="col">
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="@car.ImageUrl" alt="Card image cap">
+                    <div class="card-body" title="@car.BrandId">
+                        <h5 class="card-title" title="@car.ModelId">@car.Brand @car.Model</h5>
+                        <p class="card-text" title="@car.CategoryId">@car.Brand @car.Model first registrated on @car.FirstRegistration that costs €@car.Price.</p>
+                        <a asp-controller="Cars" asp-action="Details" asp-route-id="@car.Id" class="btn btn-primary">Details</a>
+                        @if (ViewBag.IsSeller == true)
+                        {
+                            <a asp-controller="Cars" asp-action="Edit" asp-route-id="@car.Id" class="btn btn-warning">Edit</a>
+                            <a asp-controller="Cars" asp-action="Delete" asp-route-id="@car.Id" class="btn btn-danger">Delete</a>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col" hidden>
+                <div class="card" style="width: 18rem;">
+                    <img class="card-img-top" src="@car.ImageUrl" alt="Card image cap">
+                    <div class="card-body" title="@car.BrandId">
+                        <h5 class="card-title" title="@car.ModelId">@car.Brand @car.Model</h5>
+                        <p class="card-text" title="@car.CategoryId">@car.Brand @car.Model first registrated on @car.FirstRegistration that costs €@car.Price.</p>
+                        <a asp-controller="Cars" asp-action="Details" asp-route-id="@car.Id" class="btn btn-primary">Details</a>
+                        <a asp-controller="Cars" asp-action="Edit" asp-route-id="@car.Id" class="btn btn-warning">Edit</a>
+                        <a asp-controller="Cars" asp-action="Delete" asp-route-id="@car.Id" class="btn btn-danger">Delete</a>
+                    </div>
+                </div>
+            </div>
+        }
+
+    }
+</div>
+
+<button type="button" class="btn btn-primary btn-lg btn-block" id="btn" onclick="viewMore()">Load more</button>
+
+<script>
+    let sciptsClicked = 0;
+    let selectedBrand = 0;
+    let selectedModel = 0;
+    let selectedCategory = 0;
+    let carsShown = 3;
+    var brandsArray = [];
+
+    function brandFilter() {
+        let btn = document.getElementById("btn");
+        brandsArray = [];
+        btn.disabled = false;
+        let brandSelect = document.getElementById("BrandId");
+        let modelSelect = document.getElementById("ModelId");
+        let selectedItem = document.getElementById("0");
+        modelSelect.disabled = false;
+        let brand = brandSelect.options[brandSelect.selectedIndex];
+        selectedBrand = brand.id;
+        let modelArray = modelSelect.options;
+
+        for (let i = 0; i < modelArray.length; i++) {
+            if (modelArray[i].attributes.id.value == brand.attributes.id.value || modelArray[i].attributes.id.value == "AllCars") {
+                modelArray[i].style.display = "block";
+                modelSelect.selectedIndex = selectedItem;
+            }
+            else {
+                modelArray[i].style.display = "none";
+            }
+        }
+
+        let brandElements = document.getElementsByClassName("card-body");
+
+        if (brand.value == "AllCars") {
+            carsShown = 3;
+            for (var i = 0; i < brandElements.length; i++) {
+                if (brandsArray.length >= 3) {
+                    let currentElement = brandElements[i].parentElement.parentElement;
+                    currentElement.hidden = true;
+                    brandsArray.push(currentElement);
+                } else {
+                    let currentElement = brandElements[i].parentElement.parentElement;
+                    currentElement.hidden = false;
+                    brandsArray.push(currentElement);
+                }
+
+            }
+        }
+        else {
+            for (var i = 0; i < brandElements.length; i++) {
+
+                if (brandElements[i].title !== brand.id) {
+                    brandElements[i].parentElement.parentElement.hidden = true;
+                } else if (brandsArray.length >= 3) {
+                    let currentElement = brandElements[i].parentElement.parentElement;
+                    currentElement.hidden = true;
+                    brandsArray.push(currentElement);
+                }
+                else {
+                    let currentElement = brandElements[i].parentElement.parentElement;
+                    currentElement.hidden = false;
+                    brandsArray.push(currentElement);
+                }
+            }
+        }
+        carsShown = 3;
+        sciptsClicked++;
+    }
+
+    function modelFilter() {
+        let btn = document.getElementById("btn");
+        btn.disabled = false;
+        let modelSelect = document.getElementById("ModelId");
+        let model = modelSelect.options[modelSelect.selectedIndex];
+        selectedModel = model.value;
+        let modelElements = document.getElementsByClassName("card-title");
+
+        for (var i = 0; i < modelElements.length; i++) {
+            if (modelElements[i].title !== model.value) {
+                modelElements[i].parentElement.parentElement.parentElement.hidden = true;
+            }
+            else {
+                modelElements[i].parentElement.parentElement.parentElement.hidden = false;
+            }
+        }
+        sciptsClicked++;
+    }
+
+    function categoryFilter() {
+        let btn = document.getElementById("btn");
+        btn.disabled = false;
+        let brandSelect = document.getElementById("BrandId");
+        let categorySelect = document.getElementById("CategoryId");
+        let category = categorySelect.options[categorySelect.selectedIndex];
+        let brand = brandSelect.options[brandSelect.selectedIndex];
+        let categoryElements = document.getElementsByClassName("card-text");
+        selectedCategory = category.id;
+
+        for (var i = 0; i < categoryElements.length; i++) {
+            if (categoryElements[i].title == category.value && categoryElements[i].parentElement.title == brand.id) {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else if (category.value == "AllCars" && categoryElements[i].parentElement.title == brand.id) {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else if (categoryElements[i].title == category.value && brand.id == "AllCars") {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else if (categoryElements[i].title == category.value && brand.id == "0") {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else if (category.value == "AllCars" && brand.id == "0") {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else if (category.value == "AllCars" && brand.id == "AllCars") {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
+            } else {
+                categoryElements[i].parentElement.parentElement.parentElement.hidden = true;
+            }
+        }
+        sciptsClicked++;
+
+    }
+
+    function viewMore() {
+        let cards = document.getElementsByClassName("card");
+        let btn = document.getElementById("btn");
+        let category = document.getElementsByClassName("card-text");
+        if (sciptsClicked == 0) {
+            if (carsShown + 3 <= cards.length) {
+                btn.disabled = false;
+                for (var i = carsShown; i < carsShown + 3; i++) {
+                    let divElement = cards[i].parentElement;
+                    divElement.hidden = false;
+                }
+                carsShown += 3;
+            } else if (carsShown + 3 > cards.length && carsShown < cards.length) {
+                btn.disabled = false;
+                for (var i = carsShown; i < cards.length; i++) {
+                    let divElement = cards[i].parentElement;
+                    divElement.hidden = false;
+                    carsShown++;
+                }
+                btn.disabled = true;
+            } else if (cards.length <= carsShown) {
+                btn.disabled = true;
+            }
+        } else if (brandsArray.length > 0) {
+            if (carsShown + 3 < brandsArray.length) {
+                btn.disabled = false;
+                for (let i = carsShown; i < carsShown + 3; i++) {
+                    let divElement = cards[i].parentElement;
+                    divElement.hidden = false;
+                }
+                carsShown += 3;
+            } else if (carsShown + 3 > brandsArray.length && carsShown < brandsArray.length) {
+                btn.disabled = false;
+                for (let i = carsShown; i < brandsArray.length; i++) {
+                    let divElement = brandsArray[i]
+                    divElement.hidden = false;
+                }
+                btn.disabled = true;
+            } else if (brandsArray.length <= carsShown) {
+                btn.disabled = true;
+            }
+
+        }
+
+
+    }
+</script>

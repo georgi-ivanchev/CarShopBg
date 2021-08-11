@@ -12,14 +12,27 @@
 
         public bool IsSeller(string userId)
               => this.data
-                .Sellers
-                .Any(s => s.UserId == userId);
+            .Sellers
+            .Any(s => s.UserId == userId);
+
+        public bool IsCarSeller(int carId, int sellerId)
+            => this.data
+            .Cars
+            .Where(c=>c.Id == carId)
+            .Any(c => c.SellerId == sellerId);
 
         public int IdByUserId(string userId)
             => this.data
             .Sellers
             .Where(s => s.UserId == userId)
             .Select(s => s.Id)
+            .FirstOrDefault();
+
+        public int IdByCarId(int carId)
+            => this.data
+            .Cars
+            .Where(c => c.Id == carId)
+            .Select(c => c.SellerId)
             .FirstOrDefault();
 
         public void CreateSeller(string name,

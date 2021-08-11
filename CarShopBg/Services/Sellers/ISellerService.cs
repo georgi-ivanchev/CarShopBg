@@ -9,7 +9,11 @@ namespace CarShopBg.Services.Sellers
     {
         bool IsSeller(string userId);
 
+        bool IsCarSeller(int carId, int sellerId);
+
         int IdByUserId(string userId);
+
+        int IdByCarId(int carId);
 
         void CreateSeller(string name,
             string phoneNumber,

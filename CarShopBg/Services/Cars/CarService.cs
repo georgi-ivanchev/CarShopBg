@@ -7,51 +7,34 @@
     using System.Linq;
     using CarShopBg.Models.Enums;
     using CarShopBg.Models.Cars;
+    using CarShopBg.Services.Sellers;
 
     public class CarService : ICarService
     {
         private readonly CarShopBgDbContext data;
+        private readonly ISellerService sellers;
 
-        public CarService(CarShopBgDbContext data) => this.data = data;
+        public CarService(CarShopBgDbContext data, ISellerService sellers)
+        {
+            this.data = data;
+            this.sellers = sellers;
+        }
 
 
         public AllCarsServiceModel AllCars()
         {
-            var cars = data.Cars
-                .OrderByDescending(c => c.Id)
-                .Select(c => new CarServiceModel
-                {
-                    BrandId = c.BrandId,
-                    ModelId = c.ModelId,
-                    Price = c.Price,
-                    FirstRegistration = c.FirstRegistration,
-                    Id = c.Id,
-                    ImageUrl = c.ImageUrl,
-                    CategoryId = c.CategoryId
-                })
-                .ToList();
-
+            var cars = GetCars(data.Cars
+                .OrderByDescending(c => c.Id));
+                
             return MapCarBrands(cars);
         }
 
         public AllCarsServiceModel GetMyOffers(string userId)
         {
-            var seller = data.Sellers.Where(s => s.UserId == userId).FirstOrDefault();
-            var sellerId = seller.Id;
-            var cars = data.Cars
+            var sellerId = sellers.IdByUserId(userId);
+            var cars = GetCars(this.data.Cars
                 .OrderByDescending(c => c.Id)
-                .Where(c => c.SellerId == sellerId)
-                .Select(c => new CarServiceModel
-                {
-                    BrandId = c.BrandId,
-                    ModelId = c.ModelId,
-                    Price = c.Price,
-                    FirstRegistration = c.FirstRegistration,
-                    Id = c.Id,
-                    ImageUrl = c.ImageUrl,
-                    CategoryId = c.CategoryId
-                })
-                .ToList();
+                .Where(c => c.SellerId == sellerId));
 
             return MapCarBrands(cars);
         }
@@ -92,15 +75,40 @@
             data.SaveChanges();
         }
 
-        public CarDetailsViewModel Details(int carId)
+        public bool EditCar(int carId, CarOfferFormModel carModel)
         {
-            var sellerId = data.Cars.Where(c => c.Id == carId).Select(c => c.SellerId).FirstOrDefault();
-            var seller = data.Sellers.Where(s => s.Id == sellerId).First();
+            var car = data.Cars.Where(c => c.Id == carId).FirstOrDefault();
+            if (car == null)
+            {
+                return false;
+            }
+
+            car.HorsePower = carModel.HorsePower;
+            car.Price = carModel.Price;
+            car.Mileage = carModel.Mileage;
+            car.FirstRegistration = carModel.FirstRegistration;
+            car.FuelType = carModel.FuelType;
+            car.Description = carModel.Description;
+            car.ImageUrl = carModel.ImageUrl;
+            car.Gearbox = carModel.Gearbox;
+            car.EngineCapacity = carModel.EngineCapacity;
+            car.BrandId = carModel.BrandId;
+            car.ModelId = carModel.ModelId;
+            car.CategoryId = carModel.CategoryId;
+
+            data.SaveChanges();
+            return true;
+        }
+
+        public CarDetailsViewModel Details(int id)
+        {
+            var sellerId = sellers.IdByCarId(id);
+            var seller = GetSeller(sellerId);
             var sellerName = seller.Name;
             var sellerPhoneNumber = seller.PhoneNumber;
 
             var carModel = data.Cars
-                .Where(c => c.Id == carId)
+                .Where(c => c.Id == id)
                 .Select(c => new CarDetailsViewModel
                 {
                     Id = c.Id,
@@ -132,6 +140,7 @@
             return carModel;
         }
 
+
         public IEnumerable<BrandAndCategoryServiceModel> GetCarCategories()
             => this.data
                 .Categories
@@ -141,6 +150,10 @@
                     Name = c.Name
                 })
                 .ToList();
+
+
+        public Seller GetSeller(int sellerId)
+            => this.data.Sellers.Where(s => s.Id == sellerId).FirstOrDefault();
 
         public IEnumerable<BrandAndCategoryServiceModel> GetCarBrands()
             => this.data
@@ -162,6 +175,21 @@
                     BrandId = c.BrandId
                 })
                 .ToList();
+
+        public List<CarServiceModel> GetCars(IQueryable<Car> cars)
+        {
+            return cars.Select(c => new CarServiceModel
+            {
+                BrandId = c.BrandId,
+                ModelId = c.ModelId,
+                Price = c.Price,
+                FirstRegistration = c.FirstRegistration,
+                Id = c.Id,
+                ImageUrl = c.ImageUrl,
+                CategoryId = c.CategoryId
+            })
+                .ToList();
+        }
 
         public AllCarsServiceModel MapCarBrands(List<CarServiceModel> cars)
         {
