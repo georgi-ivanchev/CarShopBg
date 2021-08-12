@@ -27,6 +27,8 @@
 
         CarDetailsViewModel Details(int carId);
 
+        bool DeleteCar(int carId);
+
         bool EditCar(int carId, CarOfferFormModel carModel);
 
         IEnumerable<BrandAndCategoryServiceModel> GetCarCategories();

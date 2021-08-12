@@ -2,8 +2,10 @@
 @using CarShopBg.Services.Sellers 
 @using CarShopBg.Infrastructure
 
-@inject SignInManager<IdentityUser> SignInManager
-@inject UserManager<IdentityUser> UserManager
+@using CarShopBg.Data.Models;
+
+@inject SignInManager<User> SignInManager
+@inject UserManager<User> UserManager
 @inject ISellerService Sellers
 
 <ul class="navbar-nav">

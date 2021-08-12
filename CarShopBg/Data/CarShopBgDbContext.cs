@@ -3,7 +3,6 @@
     using Microsoft.EntityFrameworkCore;
     using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
     using CarShopBg.Data.Models;
-    using Microsoft.AspNetCore.Identity;
 
     public class CarShopBgDbContext : IdentityDbContext
     {
@@ -55,7 +54,7 @@
 
             builder
                 .Entity<Seller>()
-                .HasOne<IdentityUser>()
+                .HasOne<User>()
                 .WithOne()
                 .HasForeignKey<Seller>(s => s.UserId)
                 .OnDelete(DeleteBehavior.Restrict);

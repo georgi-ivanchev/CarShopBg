@@ -75,9 +75,22 @@
             data.SaveChanges();
         }
 
+        public bool DeleteCar(int carId)
+        {
+            var car = CarCheck(carId);
+            if (car == null)
+            {
+                return false;
+            }
+
+            data.Cars.Remove(car);
+            data.SaveChanges();
+            return true;
+        }
+
         public bool EditCar(int carId, CarOfferFormModel carModel)
         {
-            var car = data.Cars.Where(c => c.Id == carId).FirstOrDefault();
+            var car = CarCheck(carId);
             if (car == null)
             {
                 return false;
@@ -124,6 +137,7 @@
                     Price = c.Price,
                     Gearbox = c.Gearbox,
                     HorsePower = c.HorsePower,
+                    SellerId = sellerId,
                     SellerName = sellerName,
                     SellerPhoneNumber = sellerPhoneNumber
                 })
@@ -140,6 +154,12 @@
             return carModel;
         }
 
+
+        public Car CarCheck(int carId)
+           => this.data
+            .Cars
+            .Where(c => c.Id == carId)
+            .FirstOrDefault();
 
         public IEnumerable<BrandAndCategoryServiceModel> GetCarCategories()
             => this.data

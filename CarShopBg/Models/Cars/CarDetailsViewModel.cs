@@ -36,6 +36,8 @@
 
         public string Category { get; set; }
 
+        public int SellerId { get; set; }
+
         public string SellerName { get; init; }
 
         public string SellerPhoneNumber { get; init; }

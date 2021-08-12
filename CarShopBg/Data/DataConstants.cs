@@ -12,5 +12,8 @@
 
         public const int SellerNameMaxLenght = 20;
         public const int PhoneNumberMaxLenght = 25;
+
+        public const int UserFirstNameMaxLenght = 20;
+        public const int UserLastNameMaxLenght = 30;
     }
 }
