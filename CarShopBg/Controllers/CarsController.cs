@@ -173,5 +173,31 @@
 
             return RedirectToAction(nameof(Details), new { id });
         }
+
+        [Authorize]
+        public IActionResult ConfirmDelete(int id)
+        {
+            var car = cars.Details(id);
+
+            return View(car);
+        }
+
+        [HttpPost]
+        [Authorize]
+        public IActionResult Delete(int id)
+        {
+            var sellerId = sellers.IdByUserId(this.User.Id());
+            if (!sellers.IsCarSeller(id, sellerId))
+            {
+                return Unauthorized();
+            }
+            cars.DeleteCar(id);
+            var hasBeenDeleted = cars.DeleteCar(id);
+            if (!hasBeenDeleted)
+            {
+                return BadRequest();
+            }
+            return RedirectToAction(nameof(CarsController.MyOffers), "Cars");
+        }
     }
 }
