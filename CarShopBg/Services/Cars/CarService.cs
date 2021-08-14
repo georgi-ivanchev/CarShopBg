@@ -25,7 +25,7 @@
         {
             var cars = GetCars(data.Cars
                 .OrderByDescending(c => c.Id));
-                
+
             return MapCarBrands(cars);
         }
 
@@ -39,7 +39,7 @@
             return MapCarBrands(cars);
         }
 
-        public void CreateCar(
+        public bool CreateCar(
             int brandId,
             int modelId,
             int price,
@@ -54,6 +54,10 @@
             Gearbox gearbox,
             int sellerId)
         {
+            if (modelId < 1 || brandId < 1)
+            {
+                return false;
+            }
             var car = new Car
             {
                 BrandId = brandId,
@@ -73,6 +77,8 @@
 
             data.Cars.Add(car);
             data.SaveChanges();
+
+            return true;
         }
 
         public bool DeleteCar(int carId)

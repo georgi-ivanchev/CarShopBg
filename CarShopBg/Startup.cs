@@ -5,13 +5,16 @@ namespace CarShopBg
     using CarShopBg.Services.Home;
     using CarShopBg.Services.Cars;
     using CarShopBg.Services.Sellers;
+    using Microsoft.AspNetCore.Mvc;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.Hosting;
     using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.Configuration;
     using Microsoft.Extensions.DependencyInjection;
-    using Microsoft.Extensions.Hosting;
+    using CarShopBg.Data.Models;
+
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -26,14 +29,16 @@ namespace CarShopBg
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
             services.AddDatabaseDeveloperPageExceptionFilter();
+            services.AddControllersWithViews(options =>
+            {
+                options.Filters.Add<AutoValidateAntiforgeryTokenAttribute>();
+            });
 
             services.AddTransient<ICarService, CarService>();
-
+            services.AddTransient<IHomeService, HomeService>();
             services.AddTransient<ISellerService, SellerService>();
 
-            services.AddTransient<IHomeService, HomeService>();
-
-            services.AddDefaultIdentity<IdentityUser>(options =>
+            services.AddDefaultIdentity<User>(options =>
             {
                 options.User.RequireUniqueEmail = true;
                 options.SignIn.RequireConfirmedAccount = false;
@@ -42,7 +47,9 @@ namespace CarShopBg
                 options.Password.RequireUppercase = false;
                 options.Password.RequireNonAlphanumeric = false;
             })
+                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<CarShopBgDbContext>();
+
             services.AddControllersWithViews();
         }
 

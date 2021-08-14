@@ -10,7 +10,7 @@
 
         AllCarsServiceModel GetMyOffers(string userId);
 
-        void CreateCar
+        bool CreateCar
             (int brandId,
             int modelId,
             int price,

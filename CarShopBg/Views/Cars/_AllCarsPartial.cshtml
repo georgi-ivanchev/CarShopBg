@@ -63,8 +63,11 @@
                         <h5 class="card-title" title="@car.ModelId">@car.Brand @car.Model</h5>
                         <p class="card-text" title="@car.CategoryId">@car.Brand @car.Model first registrated on @car.FirstRegistration that costs €@car.Price.</p>
                         <a asp-controller="Cars" asp-action="Details" asp-route-id="@car.Id" class="btn btn-primary">Details</a>
+                        @if (ViewBag.IsSeller == true)
+                        {
                         <a asp-controller="Cars" asp-action="Edit" asp-route-id="@car.Id" class="btn btn-warning">Edit</a>
-                        <a asp-controller="Cars" asp-action="Delete" asp-route-id="@car.Id" class="btn btn-danger">Delete</a>
+                        <a asp-controller="Cars" asp-action="ConfirmDelete" asp-route-id="@car.Id" class="btn btn-danger">Delete</a>
+                        }
                     </div>
                 </div>
             </div>

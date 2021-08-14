@@ -45,6 +45,7 @@
         {
             var userId = this.User.Id();
             var sellerId = sellers.IdByUserId(userId);
+            var carModelId = carModel.ModelId;
             if (!sellers.IsSeller(userId))
             {
                 return RedirectToAction(nameof(SellersController.Become), "Sellers");
@@ -57,7 +58,7 @@
                 return View(carModel);
             }
 
-            cars.CreateCar(
+            var isCreated = cars.CreateCar(
                 carModel.BrandId,
                 carModel.ModelId,
                 carModel.Price,
@@ -71,6 +72,15 @@
                 carModel.HorsePower,
                 carModel.Gearbox,
                 sellerId);
+
+            if (!isCreated)
+            {
+                carModel.Categories = cars.GetCarCategories();
+                carModel.Brands = cars.GetCarBrands();
+                carModel.Models = cars.GetCarModels();
+                return View(carModel);
+            }
+            
 
             return RedirectToAction(nameof(CarsController.All), "Cars");
         }
@@ -191,7 +201,6 @@
             {
                 return Unauthorized();
             }
-            cars.DeleteCar(id);
             var hasBeenDeleted = cars.DeleteCar(id);
             if (!hasBeenDeleted)
             {

@@ -25,17 +25,17 @@
                             <option value="0" id="0" disabled selected hidden>Select your model</option>
                             @foreach (var currentModel in Model.Models)
                             {
-                                <option value="@currentModel.Id" id="@currentModel.BrandId">@currentModel.Name</option>
+                                <option value="@currentModel.Id" id="@currentModel.BrandId" style="display:none">@currentModel.Name</option>
                             }
                         </select>
                     }
                     @if (!ViewBag.Edit)
                     {
-                        <select asp-for="ModelId" class="form-control" id="ModelId" disabled>
-                            <option value="0" id="0" disabled selected hidden>Select your model</option>
+                        <select asp-for="ModelId" class="form-control" id="ModelId">
+                            <option value="0" id="0" hidden>Select your model</option>
                             @foreach (var currentModel in Model.Models)
                             {
-                                <option value="@currentModel.Id" id="@currentModel.BrandId">@currentModel.Name</option>
+                                <option value="@currentModel.Id" id="@currentModel.BrandId" style="display:none">@currentModel.Name</option>
                             }
                         </select>
                     }
@@ -129,7 +129,6 @@
                     let brandSelect = document.getElementById("BrandId");
                     let modelSelect = document.getElementById("ModelId");
                     let selectedItem = document.getElementById("0");
-                    modelSelect.disabled = false;
                     let brand = brandSelect.options[brandSelect.selectedIndex];
                     let modelArray = modelSelect.options;
                     for (let i = 0; i < modelArray.length; i++) {
