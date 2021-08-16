@@ -35,6 +35,8 @@
 
         public string EngineCapacity { get; set; }
 
+        public bool IsApproved { get; set; }
+
         public Brand Brand { get; init; }
 
         [Required]

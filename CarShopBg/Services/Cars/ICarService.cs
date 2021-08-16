@@ -6,11 +6,11 @@
     using CarShopBg.Services.Cars.Models;
     public interface ICarService
     {
-        AllCarsServiceModel AllCars();
+        AllCarsServiceModel AllCars(bool publicOnly);
 
         AllCarsServiceModel GetMyOffers(string userId);
 
-        void CreateCar
+        bool CreateCar
             (int brandId,
             int modelId,
             int price,
@@ -28,6 +28,8 @@
         CarDetailsViewModel Details(int carId);
 
         bool DeleteCar(int carId);
+
+        void ApproveCar(int carId);
 
         bool EditCar(int carId, CarOfferFormModel carModel);
 

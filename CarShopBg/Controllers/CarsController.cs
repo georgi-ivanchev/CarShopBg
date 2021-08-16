@@ -45,6 +45,7 @@
         {
             var userId = this.User.Id();
             var sellerId = sellers.IdByUserId(userId);
+            var carModelId = carModel.ModelId;
             if (!sellers.IsSeller(userId))
             {
                 return RedirectToAction(nameof(SellersController.Become), "Sellers");
@@ -57,7 +58,7 @@
                 return View(carModel);
             }
 
-            cars.CreateCar(
+            var isCreated = cars.CreateCar(
                 carModel.BrandId,
                 carModel.ModelId,
                 carModel.Price,
@@ -72,6 +73,15 @@
                 carModel.Gearbox,
                 sellerId);
 
+            if (!isCreated)
+            {
+                carModel.Categories = cars.GetCarCategories();
+                carModel.Brands = cars.GetCarBrands();
+                carModel.Models = cars.GetCarModels();
+                return View(carModel);
+            }
+            
+
             return RedirectToAction(nameof(CarsController.All), "Cars");
         }
 
@@ -79,10 +89,10 @@
         {
             var allCars = new AllCarsViewModel
             {
-                Cars = cars.AllCars().Cars,
-                Categories = cars.AllCars().Categories,
-                Brands = cars.AllCars().Brands,
-                Models = cars.AllCars().Models
+                Cars = cars.AllCars(publicOnly: true).Cars,
+                Categories = cars.AllCars(publicOnly: true).Categories,
+                Brands = cars.AllCars(publicOnly: true).Brands,
+                Models = cars.AllCars(publicOnly: true).Models
             };
 
             return View(allCars);
@@ -113,11 +123,11 @@
         {
             var userId = User.Id();
             var sellerId = sellers.IdByUserId(userId);
-            if (!this.sellers.IsSeller(userId))
+            if (!this.sellers.IsSeller(userId) && !User.IsAdmin())
             {
                 return RedirectToAction(nameof(SellersController.Become), "Sellers");
             }
-            if (!sellers.IsCarSeller(id, sellerId))
+            if (!sellers.IsCarSeller(id, sellerId) && !User.IsAdmin())
             {
                 return Unauthorized();
             }
@@ -166,7 +176,7 @@
                 return View(car);
             }
             var sellerId = sellers.IdByUserId(this.User.Id());
-            if (!sellers.IsCarSeller(id, sellerId))
+            if (!sellers.IsCarSeller(id, sellerId) && !User.IsAdmin())
             {
                 return Unauthorized();
             }
@@ -177,6 +187,17 @@
         [Authorize]
         public IActionResult ConfirmDelete(int id)
         {
+            var userId = User.Id();
+            var sellerId = sellers.IdByUserId(userId);
+            if (!this.sellers.IsSeller(userId) && !User.IsAdmin())
+            {
+                return RedirectToAction(nameof(SellersController.Become), "Sellers");
+            }
+            if (!sellers.IsCarSeller(id, sellerId) && !User.IsAdmin())
+            {
+                return Unauthorized();
+            }
+
             var car = cars.Details(id);
 
             return View(car);
@@ -187,15 +208,18 @@
         public IActionResult Delete(int id)
         {
             var sellerId = sellers.IdByUserId(this.User.Id());
-            if (!sellers.IsCarSeller(id, sellerId))
+            if (!sellers.IsCarSeller(id, sellerId) && !User.IsAdmin())
             {
                 return Unauthorized();
             }
-            cars.DeleteCar(id);
             var hasBeenDeleted = cars.DeleteCar(id);
             if (!hasBeenDeleted)
             {
                 return BadRequest();
+            }
+            if (User.IsAdmin())
+            {
+                return RedirectToAction(nameof(CarsController.All), "Cars");
             }
             return RedirectToAction(nameof(CarsController.MyOffers), "Cars");
         }

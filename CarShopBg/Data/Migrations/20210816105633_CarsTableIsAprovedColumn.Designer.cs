@@ -10,15 +10,15 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CarShopBg.Data.Migrations
 {
     [DbContext(typeof(CarShopBgDbContext))]
-    [Migration("20210806112001_CarSellerBrandModelCategory")]
-    partial class CarSellerBrandModelCategory
+    [Migration("20210816105633_CarsTableIsAprovedColumn")]
+    partial class CarsTableIsAprovedColumn
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.3")
+                .HasAnnotation("ProductVersion", "5.0.8")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
             modelBuilder.Entity("CarShopBg.Data.Models.Brand", b =>
@@ -73,6 +73,9 @@ namespace CarShopBg.Data.Migrations
                     b.Property<string>("ImageUrl")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsApproved")
+                        .HasColumnType("bit");
 
                     b.Property<int>("Mileage")
                         .HasColumnType("int");
@@ -226,6 +229,10 @@ namespace CarShopBg.Data.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Discriminator")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -277,6 +284,8 @@ namespace CarShopBg.Data.Migrations
                         .HasFilter("[NormalizedUserName] IS NOT NULL");
 
                     b.ToTable("AspNetUsers");
+
+                    b.HasDiscriminator<string>("Discriminator").HasValue("IdentityUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
@@ -363,6 +372,21 @@ namespace CarShopBg.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
+            modelBuilder.Entity("CarShopBg.Data.Models.User", b =>
+                {
+                    b.HasBaseType("Microsoft.AspNetCore.Identity.IdentityUser");
+
+                    b.Property<string>("FirstName")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("LastName")
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.HasDiscriminator().HasValue("User");
+                });
+
             modelBuilder.Entity("CarShopBg.Data.Models.Car", b =>
                 {
                     b.HasOne("CarShopBg.Data.Models.Brand", "Brand")
@@ -411,7 +435,7 @@ namespace CarShopBg.Data.Migrations
 
             modelBuilder.Entity("CarShopBg.Data.Models.Seller", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                    b.HasOne("CarShopBg.Data.Models.User", null)
                         .WithOne()
                         .HasForeignKey("CarShopBg.Data.Models.Seller", "UserId")
                         .OnDelete(DeleteBehavior.Restrict)

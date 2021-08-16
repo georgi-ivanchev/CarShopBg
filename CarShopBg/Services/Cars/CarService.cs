@@ -20,12 +20,21 @@
             this.sellers = sellers;
         }
 
+        public void ApproveCar(int carId)
+        {
+            var car = this.data.Cars.Find(carId);
 
-        public AllCarsServiceModel AllCars()
+            car.IsApproved = !car.IsApproved;
+
+            this.data.SaveChanges();
+        }
+
+        public AllCarsServiceModel AllCars(bool publicOnly)
         {
             var cars = GetCars(data.Cars
+                .Where(c => c.IsApproved == true || !publicOnly)
                 .OrderByDescending(c => c.Id));
-                
+
             return MapCarBrands(cars);
         }
 
@@ -39,7 +48,7 @@
             return MapCarBrands(cars);
         }
 
-        public void CreateCar(
+        public bool CreateCar(
             int brandId,
             int modelId,
             int price,
@@ -54,6 +63,10 @@
             Gearbox gearbox,
             int sellerId)
         {
+            if (modelId < 1 || brandId < 1)
+            {
+                return false;
+            }
             var car = new Car
             {
                 BrandId = brandId,
@@ -68,11 +81,14 @@
                 EngineCapacity = engineCapacity,
                 HorsePower = horsePower,
                 Gearbox = gearbox,
-                SellerId = sellerId
+                SellerId = sellerId,
+                IsApproved = false
             };
 
             data.Cars.Add(car);
             data.SaveChanges();
+
+            return true;
         }
 
         public bool DeleteCar(int carId)
@@ -108,6 +124,7 @@
             car.BrandId = carModel.BrandId;
             car.ModelId = carModel.ModelId;
             car.CategoryId = carModel.CategoryId;
+            car.IsApproved = false;
 
             data.SaveChanges();
             return true;
@@ -206,7 +223,8 @@
                 FirstRegistration = c.FirstRegistration,
                 Id = c.Id,
                 ImageUrl = c.ImageUrl,
-                CategoryId = c.CategoryId
+                CategoryId = c.CategoryId,
+                IsApproved = c.IsApproved
             })
                 .ToList();
         }
@@ -231,7 +249,7 @@
                 Cars = cars,
                 Categories = GetCarCategories(),
                 Brands = GetCarBrands(),
-                Models = GetCarModels()
+                Models = GetCarModels(),
             };
             return allCars;
         }

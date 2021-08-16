@@ -1,32 +1,81 @@
 ﻿namespace CarShopBg.Infrastructure
 {
+    using System;
     using System.Linq;
+    using System.Threading.Tasks;
     using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Identity;
     using Microsoft.EntityFrameworkCore;
     using Microsoft.Extensions.DependencyInjection;
     using CarShopBg.Data;
     using CarShopBg.Data.Models;
+    using static Areas.Admin.AdminConstants;
 
     public static class ApplicationBuilderExtentions
     {
         public static IApplicationBuilder PrepareDatabase(
             this IApplicationBuilder app)
         {
-            using var scopedServices = app.ApplicationServices.CreateScope();
+            using var serviceScope = app.ApplicationServices.CreateScope();
+            var services = serviceScope.ServiceProvider;
 
-            var data = scopedServices.ServiceProvider.GetService<CarShopBgDbContext>();
+            MigrateDatabase(services);
 
-            SeedCategories(data);
-            SeedBrands(data);
-            SeedModels(data);
+            SeedAdministrator(services);
+            SeedCategories(services);
+            SeedBrands(services);
+            SeedModels(services);
 
-            data.Database.Migrate();
+
 
             return app;
         }
 
-        private static void SeedCategories(CarShopBgDbContext data)
+        private static void MigrateDatabase(IServiceProvider services)
         {
+            var data = services.GetRequiredService<CarShopBgDbContext>();
+
+            data.Database.Migrate();
+        }
+
+        private static void SeedAdministrator(IServiceProvider services)
+        {
+            var userManager = services.GetRequiredService<UserManager<User>>();
+            var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+
+            Task
+                .Run(async () =>
+                {
+                    if (await roleManager.RoleExistsAsync(AdministratorRoleName))
+                    {
+                        return;
+                    }
+
+                    var role = new IdentityRole { Name = AdministratorRoleName };
+
+                    await roleManager.CreateAsync(role);
+
+                    const string adminEmail = "admin@csbg.com";
+                    const string adminPassword = "admin123";
+
+                    var user = new User
+                    {
+                        Email = adminEmail,
+                        UserName = adminEmail,
+                        FirstName = "Admin"
+                    };
+
+                    await userManager.CreateAsync(user, adminPassword);
+
+                    await userManager.AddToRoleAsync(user, role.Name);
+                })
+                .GetAwaiter()
+                .GetResult();
+        }
+
+        private static void SeedCategories(IServiceProvider services)
+        {
+            var data = services.GetRequiredService<CarShopBgDbContext>();
             if (data.Categories.Any())
             {
                 return;
@@ -46,8 +95,10 @@
             data.SaveChanges();
         }
 
-        private static void SeedBrands(CarShopBgDbContext data)
+        private static void SeedBrands(IServiceProvider services)
         {
+            var data = services.GetRequiredService<CarShopBgDbContext>();
+
             if (data.Brands.Any())
             {
                 return;
@@ -103,8 +154,10 @@
             data.SaveChanges();
         }
 
-        private static void SeedModels(CarShopBgDbContext data)
+        private static void SeedModels(IServiceProvider services)
         {
+            var data = services.GetRequiredService<CarShopBgDbContext>();
+
             if (data.Models.Any())
             {
                 return;

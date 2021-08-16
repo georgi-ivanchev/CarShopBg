@@ -46,18 +46,19 @@ namespace CarShopBg.Models.Cars
         public string EngineCapacity { get; init; }
 
         [Display(Name = "Brand")]
+        [Required]
+        
         public int BrandId { get; init; }
 
         [Display(Name = "Model")]
-        public int ModelId { get; init; }
+        [Required]
+        public int ModelId { get; set; }
 
         [Display(Name = "Category")]
         public int CategoryId { get; init; }
 
         [Required]
         public int SellerId { get; init; }
-
-
 
         public IEnumerable<BrandAndCategoryServiceModel> Categories { get; set; }
 
