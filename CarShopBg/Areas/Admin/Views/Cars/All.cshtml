@@ -1,4 +1,9 @@
-﻿@using CarShopBg.Infrastructure
+﻿@model AllCarsViewModel
+@using CarShopBg.Infrastructure
+
+@{
+    ViewBag.Title = "Admin Panel";
+}
 
 <h2 class="text-center">@ViewBag.Title</h2>
 <div class="row">
@@ -39,18 +44,16 @@
     {
         var car = Model.Cars[i];
 
-        <div class="col" @( i < 3 ? string.Empty : "hidden")>
+        <div class="col" @(i < 3 ? string.Empty : "hidden")>
             <div class="card" style="width: 18rem;">
                 <img class="card-img-top" src="@car.ImageUrl" alt="Card image cap">
                 <div class="card-body" title="@car.BrandId">
                     <h5 class="card-title" title="@car.ModelId">@car.Brand @car.Model</h5>
-                    <p class="card-text" title="@car.CategoryId">@car.Brand @car.Model first registrated on @car.FirstRegistration that costs €@car.Price.</p>
-                    <a asp-controller="Cars" asp-action="Details" asp-route-id="@car.Id" class="btn btn-primary">Details</a>
-                    @if (ViewBag.IsSeller == true || User.IsAdmin())
-                    {
-                        <a asp-controller="Cars" asp-action="Edit" asp-route-id="@car.Id" class="btn btn-warning">Edit</a>
-                        <a asp-controller="Cars" asp-action="ConfirmDelete" asp-route-id="@car.Id" class="btn btn-danger">Delete</a>
-                    }
+                    <p class="card-text" title="@car.CategoryId">@(car.IsApproved ? "Approved" : "Awaiting Approval")</p>
+                    <a asp-controller="Cars" asp-area="" asp-action="Details" asp-route-id="@car.Id" class="btn btn-primary">Details</a>
+                    <a asp-area="" asp-controller="Cars" asp-action="Edit" asp-route-id="@car.Id" class="btn btn-secondary">Edit</a>
+                    <a asp-area="" asp-controller="Cars" asp-action="ConfirmDelete" asp-route-id="@car.Id" class="btn btn-danger">Delete</a>
+                    <a asp-area="Admin" asp-controller="Cars" asp-action="ApproveCar" asp-route-id="@car.Id" class="btn btn-success mt-1">Approve/Disable</a>
                 </div>
             </div>
         </div>

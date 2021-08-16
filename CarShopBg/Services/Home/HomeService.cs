@@ -14,6 +14,7 @@
         {
             var cars = data.Cars
                 .OrderByDescending(c => c.Id)
+                .Where(c => c.IsApproved == true)
                 .Select(c => new LastCarsServiceModel
                 {
                     BrandId = c.BrandId,
@@ -28,19 +29,15 @@
 
             foreach (var car in cars)
             {
-                var brand = data.Brands.Where(b => b.Id == car.BrandId).ToList();
-                var model = data.Models.Where(m => m.Id == car.ModelId).ToList();
+                var brand = data.Brands.Find(car.BrandId);
+                var model = data.Models.Find(car.ModelId);
 
-                car.Brand = brand[0].Name;
-                car.Model = model[0].Name;
-
+                car.Brand = brand.Name;
+                car.Model = model.Name;
             }
-
-
             return cars;
         }
 
         public int CarsCount() => data.Cars.Count();
-
     }
 }

@@ -12,6 +12,7 @@
         [Display(Name = "First Registration")]
         public string FirstRegistration { get; init; }
 
+        public bool IsApproved { get; set; }
         public int BrandId { get; init; }
 
         public int ModelId { get; init; }

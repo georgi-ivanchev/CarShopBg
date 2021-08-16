@@ -60,8 +60,6 @@ namespace CarShopBg.Models.Cars
         [Required]
         public int SellerId { get; init; }
 
-
-
         public IEnumerable<BrandAndCategoryServiceModel> Categories { get; set; }
 
         public IEnumerable<BrandAndCategoryServiceModel> Brands { get; set; }
