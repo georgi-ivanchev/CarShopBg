@@ -2,7 +2,7 @@
 
 <h2 class="text-center">@ViewBag.Title</h2>
 <div class="row">
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-6">
         <select class="form-control" id="BrandId" onchange="brandFilter()">
             <option value="0" id="0" selected hidden>Filter by brand</option>
             <option value="AllCars" id="AllCars">All</option>
@@ -12,23 +12,13 @@
             }
         </select>
     </div>
-    <div class="form-group col-md-4">
+    <div class="form-group col-md-6">
         <select class="form-control" id="ModelId" disabled onchange="modelFilter()">
             <option value="0" id="0" disabled selected hidden>Filter by model</option>
             <option value="AllCars" id="AllCars">All</option>
             @foreach (var currentModel in Model.Models)
             {
                 <option value="@currentModel.Id" id="@currentModel.BrandId">@currentModel.Name</option>
-            }
-        </select>
-    </div>
-    <div class="form-group col-md-4">
-        <select class="form-control" id="CategoryId" onchange="categoryFilter()">
-            <option value="" selected hidden>Filter by category</option>
-            <option value="AllCars" id="AllCars">All</option>
-            @foreach (var category in Model.Categories)
-            {
-                <option value="@category.Id">@category.Name</option>
             }
         </select>
     </div>
@@ -60,39 +50,37 @@
 <button type="button" class="btn btn-primary btn-lg btn-block" id="btn" onclick="viewMore()">Load more</button>
 
 <script>
-    let sciptsClicked = 0;
-    let selectedBrand = 0;
-    let selectedModel = 0;
-    let selectedCategory = 0;
+    let brandFiltered = 0;
+    let modelFiltered = 0;
     let carsShown = 3;
     var brandsArray = [];
+    var modelArray = [];
 
     function brandFilter() {
         let btn = document.getElementById("btn");
         brandsArray = [];
+        brandFiltered = 0;
         btn.disabled = false;
         let brandSelect = document.getElementById("BrandId");
         let modelSelect = document.getElementById("ModelId");
         let selectedItem = document.getElementById("0");
         modelSelect.disabled = false;
         let brand = brandSelect.options[brandSelect.selectedIndex];
-        selectedBrand = brand.id;
-        let modelArray = modelSelect.options;
+        let modelsArray = modelSelect.options;
 
-        for (let i = 0; i < modelArray.length; i++) {
-            if (modelArray[i].attributes.id.value == brand.attributes.id.value || modelArray[i].attributes.id.value == "AllCars") {
-                modelArray[i].style.display = "block";
+        for (let i = 0; i < modelsArray.length; i++) {
+            if (modelsArray[i].attributes.id.value == brand.attributes.id.value || modelsArray[i].attributes.id.value == "AllCars") {
+                modelsArray[i].style.display = "block";
                 modelSelect.selectedIndex = selectedItem;
             }
             else {
-                modelArray[i].style.display = "none";
+                modelsArray[i].style.display = "none";
             }
         }
 
         let brandElements = document.getElementsByClassName("card-body");
 
         if (brand.value == "AllCars") {
-            carsShown = 3;
             for (var i = 0; i < brandElements.length; i++) {
                 if (brandsArray.length >= 3) {
                     let currentElement = brandElements[i].parentElement.parentElement;
@@ -123,65 +111,70 @@
                 }
             }
         }
+        if (brandsArray.length == 0) {
+            btn.disabled = true;
+        }
         carsShown = 3;
-        sciptsClicked++;
+        brandFiltered++;
+        modelFiltered = 0;
+        modelArray = [];
     }
 
     function modelFilter() {
+        modelArray = [];
         let btn = document.getElementById("btn");
         btn.disabled = false;
+        modelFiltered = 0;
         let modelSelect = document.getElementById("ModelId");
-        let model = modelSelect.options[modelSelect.selectedIndex];
-        selectedModel = model.value;
-        let modelElements = document.getElementsByClassName("card-title");
-
-        for (var i = 0; i < modelElements.length; i++) {
-            if (modelElements[i].title !== model.value) {
-                modelElements[i].parentElement.parentElement.parentElement.hidden = true;
-            }
-            else {
-                modelElements[i].parentElement.parentElement.parentElement.hidden = false;
-            }
-        }
-        sciptsClicked++;
-    }
-
-    function categoryFilter() {
-        let btn = document.getElementById("btn");
-        btn.disabled = false;
         let brandSelect = document.getElementById("BrandId");
-        let categorySelect = document.getElementById("CategoryId");
-        let category = categorySelect.options[categorySelect.selectedIndex];
         let brand = brandSelect.options[brandSelect.selectedIndex];
-        let categoryElements = document.getElementsByClassName("card-text");
-        selectedCategory = category.id;
+        let model = modelSelect.options[modelSelect.selectedIndex];
+        let modelElements = document.getElementsByClassName("card-title");
+        let brandElements = document.getElementsByClassName("card-body");
 
-        for (var i = 0; i < categoryElements.length; i++) {
-            if (categoryElements[i].title == category.value && categoryElements[i].parentElement.title == brand.id) {
-                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
-            } else if (category.value == "AllCars" && categoryElements[i].parentElement.title == brand.id) {
-                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
-            } else if (categoryElements[i].title == category.value && brand.id == "AllCars") {
-                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
-            } else if (categoryElements[i].title == category.value && brand.id == "0") {
-                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
-            } else if (category.value == "AllCars" && brand.id == "0") {
-                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
-            } else if (category.value == "AllCars" && brand.id == "AllCars") {
-                categoryElements[i].parentElement.parentElement.parentElement.hidden = false;
-            } else {
-                categoryElements[i].parentElement.parentElement.parentElement.hidden = true;
+        if (model.value == "AllCars") {
+            carsshown = 3;
+            for (var i = 0; i < brandElements.length; i++) {
+                let currentElement = brandElements[i].parentElement.parentElement;
+                if (brandElements[i].title !== brand.id) {
+                    brandElements[i].parentElement.parentElement.hidden = true;
+                } else if (modelArray.length >= 3) {
+                    currentElement.hidden = true;
+                    modelArray.push(currentElement);
+                }
+                else {
+                    currentElement.hidden = false;
+                    modelArray.push(currentElement);
+                }
+            }
+        } else {
+            for (var i = 0; i < modelElements.length; i++) {
+                let currentElement = modelElements[i].parentElement.parentElement.parentElement;
+                if (modelElements[i].title !== model.value) {
+                    currentElement.hidden = true;
+                } else if (modelArray.length >= 3) {
+                    currentElement.hidden = true;
+                    modelArray.push(currentElement);
+                }
+                else {
+                    currentElement.hidden = false;
+                    modelArray.push(currentElement);
+                }
             }
         }
-        sciptsClicked++;
-
+        if (modelArray.length == 0) {
+            btn.disabled = true;
+        }
+        
+        carsShown = 3;
+        modelFiltered++;
     }
 
     function viewMore() {
         let cards = document.getElementsByClassName("card");
         let btn = document.getElementById("btn");
-        let category = document.getElementsByClassName("card-text");
-        if (sciptsClicked == 0) {
+
+        if (brandFiltered == 0) {
             if (carsShown + 3 <= cards.length) {
                 btn.disabled = false;
                 for (var i = carsShown; i < carsShown + 3; i++) {
@@ -200,15 +193,17 @@
             } else if (cards.length <= carsShown) {
                 btn.disabled = true;
             }
-        } else if (brandsArray.length > 0) {
-            if (carsShown + 3 < brandsArray.length) {
+        } else if (brandsArray.length > 0 && modelArray.length == 0 && modelFiltered == 0) {
+            console.log("hi1");
+            if (carsShown + 3 <= brandsArray.length) {
                 btn.disabled = false;
                 for (let i = carsShown; i < carsShown + 3; i++) {
-                    let divElement = cards[i].parentElement;
+                    let divElement = brandsArray[i];
                     divElement.hidden = false;
                 }
                 carsShown += 3;
             } else if (carsShown + 3 > brandsArray.length && carsShown < brandsArray.length) {
+                console.log("hi2");
                 btn.disabled = false;
                 for (let i = carsShown; i < brandsArray.length; i++) {
                     let divElement = brandsArray[i]
@@ -218,9 +213,32 @@
             } else if (brandsArray.length <= carsShown) {
                 btn.disabled = true;
             }
-
+        } else if (brandsArray.length > 0 && modelArray.length == 0 && modelFiltered == 1) {
+            console.log("hi3");
+            carsShown = 0;
+            for (var i = 0; i < length; i++) {
+                let divElement = cards[i].parentElement;
+                divElement.hidden = false;
+            }
+        } else if (brandsArray.length > 0 && modelArray.length > 0) {
+            console.log("hi4");
+            if (carsShown + 3 <= modelArray.length) {
+                btn.disabled = false;
+                for (let i = carsShown; i < carsShown + 3; i++) {
+                    let divElement = modelArray[i];
+                    divElement.hidden = false;
+                }
+                carsShown += 3;
+            } else if (carsShown + 3 > modelArray.length && carsShown < modelArray.length) {
+                btn.disabled = false;
+                for (let i = carsShown; i < modelArray.length; i++) {
+                    let divElement = modelArray[i];
+                    divElement.hidden = false;
+                }
+                btn.disabled = true;
+            } else if (brandsArray.length <= carsShown) {
+                btn.disabled = true;
+            }
         }
-
-
     }
 </script>
