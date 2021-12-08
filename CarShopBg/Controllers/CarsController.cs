@@ -24,6 +24,7 @@
         {
             var userId = this.User.Id();
             var sellerId = sellers.IdByUserId(userId);
+            var id = "new Id";
             if (!sellers.IsSeller(userId))
             {
                 return RedirectToAction(nameof(SellersController.Become), "Sellers");
